@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Free Fire Arsenal - Item Catalog</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* prevent accidental selection while scrolling */
+        }
+
+        body {
+            background: #0b0f1c;
+            font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, 'Roboto', sans-serif;
+            overflow-x: hidden; /* NO horizontal scroll */
+            overflow-y: auto;
+            color: #eef2ff;
+        }
+
+        /* main container */
+        .app-container {
+            max-width: 100vw;
+            overflow-x: hidden;
+            padding: 1.2rem 1rem 2rem;
+        }
+
+        /* header & search area */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 1.9rem;
+            background: linear-gradient(135deg, #ff9800, #ff5722);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            color: #8e9aaf;
+            font-size: 0.85rem;
+        }
+
+        /* filter bar - desktop / tablet friendly */
+        .filter-section {
+            background: #11161f;
+            border-radius: 28px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+            border: 1px solid #2a2f3f;
+        }
+
+        .search-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .search-input {
+            flex: 2;
+            min-width: 180px;
+            background: #1e2533;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 60px;
+            color: white;
+            font-size: 0.9rem;
+            outline: none;
+            transition: 0.2s;
+            border: 1px solid #2e3a48;
+        }
+
+        .search-input:focus {
+            border-color: #ff9800;
+            background: #0f141f;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .filter-select {
+            background: #1e2533;
+            border: 1px solid #2e3a48;
+            padding: 10px 14px;
+            border-radius: 40px;
+            color: #f0f3fa;
+            font-size: 0.8rem;
+            cursor: pointer;
+            outline: none;
+            min-width: 110px;
+        }
+
+        .reset-btn {
+            background: #2c2f3f;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: #ffbc6e;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #3a3f55;
+            color: #ffa040;
+        }
+
+        /* items grid: horizontal 4 columns, vertical unlimited (scroll) */
+        /* DESKTOP: exactly 4 per row */
+        /* TABLET/IPAD: 4 per row still, but smaller gap */
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.2rem;
+            margin: 1.5rem 0 2rem;
+        }
+
+        /* item card */
+        .item-card {
+            background: #121724;
+            border-radius: 24px;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #282e3e;
+            backdrop-filter: blur(2px);
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            border-color: #ff9f4a;
+        }
+
+        .card-img {
+            background: #0a0f17;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.2rem 0.5rem;
+            min-height: 150px;
+        }
+
+        .card-img img {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 6px #00000055);
+            transition: 0.2s;
+        }
+
+        .item-info {
+            padding: 0.8rem 0.8rem 1rem;
+            background: #0e131e;
+        }
+
+        .item-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #ffcd94;
+        }
+
+        .item-details {
+            font-size: 0.7rem;
+            color: #9aa7c2;
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .badge {
+            background: #20273b;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 500;
+        }
+
+        .badge.rare {
+            background: #673ab7;
+            color: white;
+        }
+
+        /* pagination */
+        .pagination {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin: 30px 0 20px;
+        }
+
+        .page-btn {
+            background: #1a1f2c;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: #ccd6f0;
+            cursor: pointer;
+            transition: 0.2s;
+            min-width: 44px;
+        }
+
+        .page-btn.active {
+            background: #ff7e2e;
+            color: white;
+            box-shadow: 0 0 6px #ff8c42;
+        }
+
+        .page-btn:hover:not(.active) {
+            background: #2d3448;
+        }
+
+        /* load more / loading state */
+        .loading-placeholder {
+            text-align: center;
+            padding: 40px;
+            color: #aaa;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.2rem;
+            background: #11161f;
+            border-radius: 40px;
+            margin-top: 20px;
+        }
+
+        /* responsive: for tablet/ipad we keep 4 columns but slightly smaller gap */
+        @media (max-width: 768px) {
+            .items-grid {
+                gap: 0.9rem;
+            }
+            .card-img img {
+                width: 70px;
+                height: 70px;
+            }
+            .item-name {
+                font-size: 0.75rem;
+            }
+            .badge {
+                font-size: 0.55rem;
+            }
+        }
+
+        /* small phones: but still 4 columns, but text smaller */
+        @media (max-width: 540px) {
+            .items-grid {
+                gap: 0.6rem;
+            }
+            .item-info {
+                padding: 0.5rem;
+            }
+            .item-name {
+                font-size: 0.7rem;
+            }
+            .badge {
+                font-size: 0.5rem;
+                padding: 2px 5px;
+            }
+            .card-img img {
+                width: 55px;
+                height: 55px;
+            }
+            .filter-select, .search-input {
+                font-size: 0.75rem;
+                padding: 8px 12px;
+            }
+        }
+
+        /* disable horizontal overflow globally */
+        body, .app-container, .items-grid {
+            overflow-x: hidden;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #5f6b89;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container" id="appRoot">
+    <div class="header">
+        <h1>🔥 Free Fire Armory</h1>
+        <p>Items | Characters | Weapons | Crates & more</p>
+    </div>
+
+    <div class="filter-section">
+        <div class="search-row">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search by ID, Name, Icon name...">
+        </div>
+        <div class="filter-group">
+            <select id="tagFilter" class="filter-select">
+                <option value="">🏷️ All Tags</option>
+            </select>
+            <select id="rareFilter" class="filter-select">
+                <option value="">✨ All Rarities</option>
+            </select>
+            <select id="typeFilter" class="filter-select">
+                <option value="">📦 All Types</option>
+            </select>
+            <button id="resetFilters" class="reset-btn">⟳ Reset</button>
+        </div>
+    </div>
+
+    <!-- items grid -->
+    <div id="itemsGrid" class="items-grid"></div>
+
+    <!-- pagination buttons -->
+    <div id="paginationContainer" class="pagination"></div>
+    <footer>⚡ Items powered by CDN | Page navigation - scroll vertical only</footer>
+</div>
+
+<script>
+    // -------- GLOBALS ----------
+    let fullItemData = [];          // original raw items
+    let filteredItems = [];         // after filters + search
+    let currentPage = 1;
+    const ITEMS_PER_PAGE = 80;      // 4 horizontal * 20 vertical = 80 items per page
+    
+    // unique sets for filters
+    let uniqueTags = new Set();
+    let uniqueRares = new Set();
+    let uniqueTypes = new Set();
+
+    // DOM elements
+    const gridContainer = document.getElementById('itemsGrid');
+    const paginationDiv = document.getElementById('paginationContainer');
+    const searchInput = document.getElementById('searchInput');
+    const tagFilter = document.getElementById('tagFilter');
+    const rareFilter = document.getElementById('rareFilter');
+    const typeFilter = document.getElementById('typeFilter');
+    const resetBtn = document.getElementById('resetFilters');
+
+    // Helper: load json data from same folder file "Upto-ob53-item-data.json"
+    async function loadItemData() {
+        try {
+            // Attempt to fetch the local JSON file (same directory)
+            const response = await fetch('./Upto-ob53-item-data.json');
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: could not load json file`);
+            }
+            const data = await response.json();
+            fullItemData = data;
+            // filter out any items that are completely empty? but keep as is, but we will show fallback
+            buildFiltersFromData();
+            applyFiltersAndRender();   // initial render
+        } catch (error) {
+            console.error("Error loading JSON:", error);
+            // fallback: show demo message / we can embed dummy small data for demonstration?
+            gridContainer.innerHTML = `<div class="no-results">⚠️ Failed to load 'Upto-ob53-item-data.json'.<br>Make sure the file is in the same folder as this HTML.</div>`;
+            paginationDiv.innerHTML = '';
+        }
+    }
+
+    // extract distinct tags, rares, types from data
+    function buildFiltersFromData() {
+        uniqueTags.clear();
+        uniqueRares.clear();
+        uniqueTypes.clear();
+        
+        // add default "all" will be handled by empty value
+        for (let item of fullItemData) {
+            // tag field
+            if (item.tag && typeof item.tag === 'string' && item.tag.trim() !== "") {
+                uniqueTags.add(item.tag);
+            }
+            // Rare field
+            if (item.Rare && typeof item.Rare === 'string' && item.Rare.trim() !== "") {
+                uniqueRares.add(item.Rare);
+            }
+            // type field
+            if (item.type && typeof item.type === 'string' && item.type.trim() !== "") {
+                uniqueTypes.add(item.type);
+            }
+        }
+        
+        // populate dropdowns
+        populateSelect(tagFilter, Array.from(uniqueTags).sort(), "🏷️ All Tags");
+        populateSelect(rareFilter, Array.from(uniqueRares).sort(), "✨ All Rarities");
+        populateSelect(typeFilter, Array.from(uniqueTypes).sort(), "📦 All Types");
+    }
+    
+    function populateSelect(selectElement, optionsArray, defaultLabel) {
+        selectElement.innerHTML = `<option value="">${defaultLabel}</option>`;
+        optionsArray.forEach(opt => {
+            const option = document.createElement('option');
+            option.value = opt;
+            option.textContent = opt;
+            selectElement.appendChild(option);
+        });
+    }
+    
+    // filtering logic (search + filters)
+    function getFilteredItems() {
+        const searchTerm = searchInput.value.trim().toLowerCase();
+        const selectedTag = tagFilter.value;
+        const selectedRare = rareFilter.value;
+        const selectedType = typeFilter.value;
+        
+        let results = [...fullItemData];
+        
+        // search: itemID, name, icon (icon property)
+        if (searchTerm !== "") {
+            results = results.filter(item => {
+                const idMatch = item.itemID?.toString().includes(searchTerm);
+                const nameMatch = item.name?.toLowerCase().includes(searchTerm);
+                const iconMatch = item.icon?.toLowerCase().includes(searchTerm);
+                return idMatch || nameMatch || iconMatch;
+            });
+        }
+        
+        // tag filter
+        if (selectedTag !== "") {
+            results = results.filter(item => item.tag === selectedTag);
+        }
+        // rare filter
+        if (selectedRare !== "") {
+            results = results.filter(item => item.Rare === selectedRare);
+        }
+        // type filter
+        if (selectedType !== "") {
+            results = results.filter(item => item.type === selectedType);
+        }
+        
+        return results;
+    }
+    
+    // update filtered list and reset to page 1
+    function applyFiltersAndRender() {
+        filteredItems = getFilteredItems();
+        currentPage = 1;
+        renderCurrentPage();
+        renderPagination();
+    }
+    
+    // render items for currentPage (lazy image fetching: only load images that are visible on this page)
+    function renderCurrentPage() {
+        if (!filteredItems.length) {
+            gridContainer.innerHTML = `<div class="no-results">😢 No items match your filters. Try resetting!</div>`;
+            return;
+        }
+        
+        const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+        const endIdx = startIdx + ITEMS_PER_PAGE;
+        const pageItems = filteredItems.slice(startIdx, endIdx);
+        
+        if (pageItems.length === 0 && currentPage > 1) {
+            // edge: if page is out of range, go to last page
+            currentPage = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+            renderCurrentPage();
+            return;
+        }
+        
+        // build html string with placeholders for images (will load after mount using observer or simple onload? but we can add lazy loading via img src)
+        // We'll use data-item-id attribute and set src after render to avoid massive network on all items at once.
+        // But we want: "which one page he opens only the fetched image for the page" -> perfect: only request images for current page items.
+        // we will render img with src initially empty or placeholder, then after insertion call loadImagesForCurrentPage()
+        gridContainer.innerHTML = '';
+        pageItems.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'item-card';
+            const itemId = item.itemID;
+            const imageUrl = itemId ? `https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/${itemId}.png` : '';
+            const displayName = item.name && item.name.trim() !== "" ? item.name : `Item #${itemId}`;
+            const tagDisplay = item.tag && item.tag !== "" ? `<span class="badge">${escapeHtml(item.tag)}</span>` : '';
+            const rareDisplay = item.Rare && item.Rare !== "NONE" && item.Rare !== "" ? `<span class="badge rare">${escapeHtml(item.Rare)}</span>` : '';
+            const typeDisplay = item.type && item.type !== "" ? `<span class="badge">${escapeHtml(item.type)}</span>` : '';
+            
+            // inner structure
+            card.innerHTML = `
+                <div class="card-img">
+                    <img class="item-img" data-src="${imageUrl}" alt="${displayName}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='%23333'%3E%3Crect width='24' height='24' fill='%231a1f2e'/%3E%3Ctext x='4' y='16' fill='%23888' font-size='10'%3E📦%3C/text%3E%3C/svg%3E">
+                </div>
+                <div class="item-info">
+                    <div class="item-name" title="${escapeHtml(displayName)}">${escapeHtml(displayName)}</div>
+                    <div class="item-details">
+                        ${tagDisplay}
+                        ${rareDisplay}
+                        ${typeDisplay}
+                        <span class="badge" style="background:#141c2a;">ID: ${itemId}</span>
+                    </div>
+                </div>
+            `;
+            gridContainer.appendChild(card);
+        });
+        
+        // after dom insertion, load images only for visible cards (on this page)
+        loadImagesForCurrentPage();
+    }
+    
+    // lazy load images on current page (no extra requests for other pages)
+    function loadImagesForCurrentPage() {
+        const images = document.querySelectorAll('.item-img');
+        images.forEach(img => {
+            const src = img.getAttribute('data-src');
+            if (src && src !== "" && img.src !== src) {
+                // we check if src is not already set to avoid duplicate requests
+                // but we want to set image only once per page render; we'll directly set src.
+                // also handle broken images (404)
+                img.src = src;
+                img.onerror = function() {
+                    this.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='%23333'%3E%3Crect width='24' height='24' fill='%23252b3b'/%3E%3Ctext x='5' y='16' fill='%23aaa' font-size='9'%3E❌%3C/text%3E%3C/svg%3E";
+                };
+            }
+        });
+    }
+    
+    // render pagination (1,2,3 ...)
+    function renderPagination() {
+        if (!filteredItems.length) {
+            paginationDiv.innerHTML = '';
+            return;
+        }
+        const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+        if (totalPages <= 1) {
+            paginationDiv.innerHTML = '';
+            return;
+        }
+        
+        let paginationHtml = '';
+        // we will show at most 7 page buttons + prev/next? but keep simple 1...total
+        const maxVisible = 7;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisible/2));
+        let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+        if (endPage - startPage + 1 < maxVisible) {
+            startPage = Math.max(1, endPage - maxVisible + 1);
+        }
+        
+        if (startPage > 1) {
+            paginationHtml += `<button class="page-btn" data-page="1">1</button>`;
+            if (startPage > 2) paginationHtml += `<span class="page-btn disabled" style="background:transparent;">...</span>`;
+        }
+        for (let i = startPage; i <= endPage; i++) {
+            paginationHtml += `<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+        }
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) paginationHtml += `<span class="page-btn disabled" style="background:transparent;">...</span>`;
+            paginationHtml += `<button class="page-btn" data-page="${totalPages}">${totalPages}</button>`;
+        }
+        
+        paginationDiv.innerHTML = paginationHtml;
+        // attach event listeners
+        document.querySelectorAll('.page-btn[data-page]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const newPage = parseInt(btn.getAttribute('data-page'), 10);
+                if (!isNaN(newPage) && newPage !== currentPage) {
+                    currentPage = newPage;
+                    renderCurrentPage();
+                    renderPagination();
+                    // scroll to top smoothly
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+        });
+    }
+    
+    // simple escape html
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+    
+    // event listeners for filters
+    function bindEvents() {
+        searchInput.addEventListener('input', () => {
+            applyFiltersAndRender();
+        });
+        tagFilter.addEventListener('change', () => {
+            applyFiltersAndRender();
+        });
+        rareFilter.addEventListener('change', () => {
+            applyFiltersAndRender();
+        });
+        typeFilter.addEventListener('change', () => {
+            applyFiltersAndRender();
+        });
+        resetBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            tagFilter.value = '';
+            rareFilter.value = '';
+            typeFilter.value = '';
+            applyFiltersAndRender();
+        });
+    }
+    
+    // additional: ensure body no horizontal scroll and page behavior
+    function enforceNoHorizontal() {
+        document.body.style.overflowX = 'hidden';
+        window.addEventListener('resize', () => {
+            if (document.body.scrollWidth > window.innerWidth) {
+                document.body.style.overflowX = 'hidden';
+            }
+        });
+    }
+    
+    // initialization
+    async function init() {
+        enforceNoHorizontal();
+        bindEvents();
+        await loadItemData();
+    }
+    
+    init();
+</script>
+</body>
+</html>
