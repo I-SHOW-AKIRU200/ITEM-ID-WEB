@@ -496,6 +496,22 @@ main { max-width: 1400px; margin: 0 auto; padding: 16px 20px 24px; }
   .tab-btn { padding: 10px 12px; font-size: 9px; letter-spacing: 0.12em; }
 }
 
+/* ── OVERLAY ACTION BUTTONS ── */
+.overlay-actions {
+  display: flex; gap: 8px; padding: 12px 20px 20px;
+  border-top: 1px solid var(--border);
+}
+.overlay-action-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+  background: var(--surface2); border: 1px solid var(--border2);
+  color: var(--text-dim); font-family: 'Orbitron', monospace;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.15em;
+  padding: 10px 0; cursor: pointer; transition: all 0.2s;
+  text-transform: uppercase;
+}
+.overlay-action-btn:hover { border-color: var(--accent); color: var(--accent); }
+.overlay-action-btn.copied { border-color: #4cff91; color: #4cff91; }
+
 /* ── HEADER TITLE ROW ── */
 .header-title-row {
   display: flex; align-items: center; justify-content: center;
@@ -755,6 +771,16 @@ body.light-theme .filter-panels-wrap { background: #f0f0f0; }
       <button class="overlay-close" onclick="closeOverlay()">&#x2715;</button>
     </div>
     <div class="overlay-details" id="overlayDetails"></div>
+    <div class="overlay-actions">
+      <button class="overlay-action-btn" id="copyIdBtn" onclick="copyOverlayItemId()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        COPY ID
+      </button>
+      <button class="overlay-action-btn" onclick="shareOverlayItem()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        SHARE
+      </button>
+    </div>
   </div>
 </div>
 
@@ -1107,10 +1133,13 @@ function goPage(p) {
   currentPage = p; renderPage(); pushURL();
 }
 
+let currentOverlayItem = null;
+
 // ═══════════════════════════════════════════════════
 //  ITEMS OVERLAY
 // ═══════════════════════════════════════════════════
 function openOverlay(item) {
+  currentOverlayItem = item;
   const overlay = document.getElementById('overlay');
   const img = document.getElementById('overlayImg');
   const loader = document.getElementById('overlayLoader');
@@ -1163,9 +1192,33 @@ function openOverlay(item) {
 function closeOverlay() {
   document.getElementById('overlay').classList.remove('open');
   document.body.style.overflow = '';
+  currentOverlayItem = null;
   const p = new URLSearchParams(window.location.search);
   p.delete('item');
   history.replaceState(null, '', p.toString() ? location.pathname + '?' + p.toString() : location.pathname);
+}
+
+function copyOverlayItemId() {
+  if (!currentOverlayItem) return;
+  const btn = document.getElementById('copyIdBtn');
+  navigator.clipboard.writeText(String(currentOverlayItem.itemID)).then(() => {
+    btn.classList.add('copied');
+    const orig = btn.innerHTML;
+    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> COPIED!`;
+    setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = orig; }, 1800);
+  }).catch(() => showDevToast('COPY FAILED'));
+}
+
+function shareOverlayItem() {
+  if (!currentOverlayItem) return;
+  const params = new URLSearchParams(window.location.search);
+  params.set('item', currentOverlayItem.itemID);
+  const url = location.origin + location.pathname + '?' + params.toString();
+  if (navigator.share) {
+    navigator.share({ title: currentOverlayItem.name || 'Item', text: 'Item ID: ' + currentOverlayItem.itemID, url });
+  } else {
+    navigator.clipboard.writeText(url).then(() => showDevToast('LINK COPIED!')).catch(() => showDevToast('COPY FAILED'));
+  }
 }
 
 // ═══════════════════════════════════════════════════
