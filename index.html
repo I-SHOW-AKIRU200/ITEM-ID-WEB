@@ -4,6 +4,27 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>KHUSHI ITEMS INFO</title>
+
+<!-- SEO -->
+<meta name="description" content="Browse and search all Free Fire items — characters, bundles, weapons, emotes, and more. Filter by type, rarity, and tag." />
+<meta name="keywords" content="Free Fire, items, database, characters, bundles, weapon skins, emotes, garena" />
+<meta name="theme-color" content="#ff6b00" />
+
+<!-- Open Graph (Facebook, WhatsApp, Telegram, Discord) -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://i-show-akiru200.github.io/ITEM-ID-WEB" />
+<meta property="og:title" content="KHUSHI ITEMS INFO" />
+<meta property="og:description" content="Browse and search all Free Fire items — characters, bundles, weapons, emotes, and more." />
+<meta property="og:image" content="https://ik.imagekit.io/mtfri1v6v/1775216677791.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:site_name" content="KHUSHI ITEMS INFO" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="KHUSHI ITEMS INFO" />
+<meta name="twitter:description" content="Browse and search all Free Fire items — characters, bundles, weapons, emotes, and more." />
+<meta name="twitter:image" content="https://ik.imagekit.io/mtfri1v6v/1775216677791.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
@@ -791,6 +812,52 @@
   let totalPages = 1;
   let activePanels = { type: false, rare: false, tag: false };
 
+// ── URL PARAMS ──
+  function getParams() { return new URLSearchParams(window.location.search); }
+
+  function pushURL() {
+    const params = new URLSearchParams();
+    const q = document.getElementById('searchInput').value.trim();
+    const typeF = document.getElementById('selectType').value;
+    const rareF = document.getElementById('selectRare').value;
+    const tagF = document.getElementById('selectTag').value;
+    if (q) params.set('q', q);
+    if (typeF) params.set('type', typeF);
+    if (rareF) params.set('rare', rareF);
+    if (tagF) params.set('tag', tagF);
+    if (currentPage > 1) params.set('page', currentPage);
+    const qs = params.toString();
+    history.replaceState(null, '', qs ? (location.pathname + '?' + qs) : location.pathname);
+  }
+
+  function readURLIntoUI() {
+    const p = getParams();
+    if (p.get('q')) document.getElementById('searchInput').value = p.get('q');
+    if (p.get('type')) document.getElementById('selectType').value = p.get('type');
+    if (p.get('rare')) document.getElementById('selectRare').value = p.get('rare');
+    if (p.get('tag')) document.getElementById('selectTag').value = p.get('tag');
+    if (p.get('page')) currentPage = Math.max(1, parseInt(p.get('page')) || 1);
+  }
+
+  function applyFiltersFromState() {
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    const typeF = document.getElementById('selectType').value;
+    const rareF = document.getElementById('selectRare').value;
+    const tagF = document.getElementById('selectTag').value;
+    filteredItems = allItems.filter(item => {
+      if (typeF && (item.type || '').toLowerCase() !== typeF.toLowerCase()) return false;
+      if (rareF && (item.Rare || '').toLowerCase() !== rareF.toLowerCase()) return false;
+      if (tagF && (item.tag || '').toLowerCase() !== tagF.toLowerCase()) return false;
+      if (q) {
+        const inId = String(item.itemID).includes(q);
+        const inName = (item.name || '').toLowerCase().includes(q);
+        const inIcon = (item.icon || '').toLowerCase().includes(q);
+        if (!inId && !inName && !inIcon) return false;
+      }
+      return true;
+    });
+  }
+
   // ── BOOT ──
   async function init() {
     try {
@@ -803,11 +870,24 @@
       allItems = raw.filter(i => i.itemID);
       buildTypeOptions();
       buildTagOptions();
-      filteredItems = [...allItems];
+      readURLIntoUI();
+      applyFiltersFromState();
       updateLoader(100, 'READY');
       await delay(300);
       showApp();
       renderPage();
+      const itemId = getParams().get('item');
+      if (itemId) {
+        const found = allItems.find(i => String(i.itemID) === String(itemId));
+        if (found) {
+          const idxInFiltered = filteredItems.findIndex(i => String(i.itemID) === String(itemId));
+          if (idxInFiltered >= 0) {
+            currentPage = Math.floor(idxInFiltered / ITEMS_PER_PAGE) + 1;
+            renderPage();
+          }
+          openOverlay(found);
+        }
+      }
     } catch(e) {
       document.getElementById('loadingText').textContent = 'ERROR: ' + e.message + ' — Place Upto-ob53-item-data.json in the same folder.';
     }
@@ -877,6 +957,7 @@
 
     currentPage = 1;
     renderPage();
+    pushURL();
   }
 
   function togglePanel(key) {
@@ -1029,6 +1110,7 @@
     if (p < 1 || p > totalPages) return;
     currentPage = p;
     renderPage();
+    pushURL();
   }
 
   // ── OVERLAY ──
@@ -1103,11 +1185,19 @@
 
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
+    // Push item into URL for direct linking
+    const itemParams = new URLSearchParams(window.location.search);
+    itemParams.set('item', item.itemID);
+    history.replaceState(null, '', location.pathname + '?' + itemParams.toString());
   }
 
   function closeOverlay() {
     document.getElementById('overlay').classList.remove('open');
     document.body.style.overflow = '';
+    const closeParams = new URLSearchParams(window.location.search);
+    closeParams.delete('item');
+    const closeQs = closeParams.toString();
+    history.replaceState(null, '', closeQs ? (location.pathname + '?' + closeQs) : location.pathname);
   }
 
   // Close on ESC
