@@ -1,708 +1,1122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>KHUSHI ITEMS INFO</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KHUSHI ITEMS INFO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
-            background-color: #000000;
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            overflow-x: hidden;
-            color: #e0e0e0;
-        }
+  :root {
+    --bg: #000000;
+    --surface: #0a0a0a;
+    --surface2: #111111;
+    --surface3: #181818;
+    --border: #1e1e1e;
+    --border2: #2a2a2a;
+    --accent: #ff6b00;
+    --accent2: #ff9500;
+    --accent-dim: rgba(255,107,0,0.12);
+    --accent-glow: rgba(255,107,0,0.25);
+    --text: #e8e8e8;
+    --text-dim: #888;
+    --text-muted: #444;
+    --rare-none: #888;
+    --rare-white: #e0e0e0;
+    --rare-blue: #4da6ff;
+    --rare-green: #4cff91;
+    --rare-purple: #c084fc;
+    --rare-purple-plus: #e040fb;
+    --rare-orange: #ff9800;
+    --rare-orange-plus: #ff6b00;
+    --rare-red: #ff4444;
+    --grid-mobile: 2;
+    --grid-tablet: 3;
+    --grid-desktop: 4;
+  }
 
-        .app-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1rem 1rem 2rem;
-            overflow-x: hidden;
-        }
+  html { scroll-behavior: smooth; }
 
-        /* header */
-        .site-header {
-            text-align: center;
-            margin-bottom: 1.2rem;
-        }
-        .site-header h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: #ffffff;
-            background: none;
-            -webkit-background-clip: unset;
-            background-clip: unset;
-        }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overscroll-behavior-x: none;
+  }
 
-        /* top bar: search + 3 filter buttons in one row */
-        .top-controls {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 0.75rem;
-            background: #0a0a0a;
-            border-radius: 60px;
-            padding: 0.5rem 1rem;
-            margin-bottom: 1.8rem;
-            border: 1px solid #1f1f1f;
-        }
-        .search-input {
-            flex: 2;
-            min-width: 140px;
-            background: #111111;
-            border: 1px solid #2a2a2a;
-            padding: 0.7rem 1rem;
-            border-radius: 40px;
-            color: #ffffff;
-            font-size: 0.85rem;
-            outline: none;
-        }
-        .search-input:focus {
-            border-color: #555;
-        }
-        .filter-btn-group {
-            display: flex;
-            gap: 0.6rem;
-            flex-wrap: nowrap;
-        }
-        .filter-toggle-btn {
-            background: #111111;
-            border: 1px solid #2a2a2a;
-            padding: 0.6rem 1.2rem;
-            border-radius: 40px;
-            color: #dddddd;
-            font-weight: 500;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: 0.2s;
-            white-space: nowrap;
-        }
-        .filter-toggle-btn.active {
-            background: #2c2c2c;
-            border-color: #777;
-            color: white;
-        }
-        .reset-icon {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            padding: 0.6rem 1rem;
-            border-radius: 40px;
-            color: #cccccc;
-            font-size: 0.8rem;
-            cursor: pointer;
-            white-space: nowrap;
-        }
+  /* ── HEADER ── */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(0,0,0,0.95);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    padding: 14px 20px 12px;
+  }
 
-        /* filter dropdown panels (hidden by default) */
-        .filter-panels {
-            background: #0a0a0a;
-            border-radius: 24px;
-            padding: 0.8rem 1rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid #1e1e1e;
-            display: none;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        .filter-panels.show {
-            display: flex;
-        }
-        .filter-group {
-            flex: 1;
-            min-width: 150px;
-        }
-        .filter-group label {
-            display: block;
-            font-size: 0.7rem;
-            color: #aaa;
-            margin-bottom: 6px;
-            letter-spacing: 0.5px;
-        }
-        .filter-select {
-            width: 100%;
-            background: #111111;
-            border: 1px solid #2c2c2c;
-            padding: 0.6rem 0.8rem;
-            border-radius: 30px;
-            color: white;
-            font-size: 0.8rem;
-            cursor: pointer;
-            outline: none;
-        }
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 
-        /* grid: 4 columns, square images */
-        .items-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            margin: 1.5rem 0 2rem;
-        }
-        .item-card {
-            background: #0c0c0c;
-            border-radius: 20px;
-            overflow: hidden;
-            transition: transform 0.15s, border 0.2s;
-            cursor: pointer;
-            border: 1px solid #202020;
-        }
-        .item-card:hover {
-            transform: translateY(-3px);
-            border-color: #444;
-        }
-        .card-img-square {
-            aspect-ratio: 1 / 1;
-            background: #050505;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-        .card-img-square img {
-            width: 80%;
-            height: 80%;
-            object-fit: contain;
-            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.8));
-        }
-        .item-info {
-            padding: 0.6rem;
-            background: #0a0a0a;
-            border-top: 1px solid #1a1a1a;
-        }
-        .item-name {
-            font-weight: 500;
-            font-size: 0.75rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: #cccccc;
-        }
-        .item-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-top: 6px;
-            font-size: 0.6rem;
-        }
-        .badge {
-            background: #161616;
-            padding: 2px 8px;
-            border-radius: 20px;
-            color: #b0b0b0;
-        }
+  .site-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(16px, 3vw, 26px);
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-align: center;
+    text-shadow: 0 0 24px var(--accent-glow);
+    line-height: 1;
+  }
 
-        /* overlay screen - no emojis, clean */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.96);
-            backdrop-filter: blur(12px);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            visibility: hidden;
-            opacity: 0;
-            transition: 0.2s ease;
-        }
-        .overlay.active {
-            visibility: visible;
-            opacity: 1;
-        }
-        .overlay-card {
-            background: #0d0d0d;
-            max-width: 90vw;
-            width: 380px;
-            border-radius: 32px;
-            padding: 1.2rem;
-            text-align: center;
-            border: 1px solid #2c2c2c;
-        }
-        .overlay-img {
-            aspect-ratio: 1/1;
-            background: #050505;
-            border-radius: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1rem;
-        }
-        .overlay-img img {
-            width: 75%;
-            height: 75%;
-            object-fit: contain;
-        }
-        .detail-row {
-            background: #111111;
-            margin: 10px 0;
-            padding: 10px 14px;
-            border-radius: 28px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-            word-break: break-word;
-            text-align: left;
-        }
-        .detail-label {
-            font-weight: 500;
-            color: #9e9e9e;
-        }
-        .detail-value {
-            color: #f0f0f0;
-            font-family: monospace;
-            font-size: 0.8rem;
-            max-width: 60%;
-            text-align: right;
-            word-break: break-all;
-        }
-        .close-overlay {
-            background: #1f1f1f;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 40px;
-            color: white;
-            font-weight: 500;
-            margin-top: 8px;
-            cursor: pointer;
-            width: 100%;
-        }
-        .close-overlay:hover {
-            background: #2f2f2f;
-        }
-        .pagination {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 20px;
-        }
-        .page-btn {
-            background: #111;
-            border: 1px solid #2a2a2a;
-            padding: 6px 14px;
-            border-radius: 30px;
-            color: #ccc;
-            cursor: pointer;
-        }
-        .page-btn.active {
-            background: #333;
-            border-color: #666;
-            color: white;
-        }
-        .no-results {
-            text-align: center;
-            padding: 3rem;
-            background: #0a0a0a;
-            border-radius: 28px;
-            color: #aaa;
-        }
-        footer {
-            text-align: center;
-            font-size: 0.7rem;
-            color: #3a3a3a;
-            margin-top: 2rem;
-        }
-        @media (max-width: 640px) {
-            .top-controls {
-                flex-wrap: wrap;
-                border-radius: 28px;
-            }
-            .filter-btn-group {
-                flex: 1;
-                justify-content: space-between;
-            }
-            .filter-toggle-btn {
-                padding: 0.5rem 0.9rem;
-                font-size: 0.7rem;
-            }
-            .items-grid {
-                gap: 0.7rem;
-            }
-        }
-    </style>
+  .controls-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .search-wrap {
+    position: relative;
+  }
+
+  .search-input {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    padding: 9px 14px 9px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    letter-spacing: 0.04em;
+  }
+
+  .search-input::placeholder { color: var(--text-muted); }
+  .search-input:focus { border-color: var(--accent); }
+
+  .filter-btn-group {
+    display: flex;
+    gap: 6px;
+  }
+
+  .filter-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text-dim);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    padding: 8px 11px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+  }
+
+  /* ── FILTER PANEL ── */
+  .filter-panel {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: none;
+    gap: 10px;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    background: #050505;
+  }
+
+  .filter-panel.open { display: flex; }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .filter-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  .filter-select {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    padding: 7px 10px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .filter-select:focus { border-color: var(--accent); }
+  .filter-select option { background: #111; }
+
+  .filter-clear-btn {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--text-dim);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    padding: 7px 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    align-self: flex-end;
+  }
+
+  .filter-clear-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 8px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stats-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .stats-count {
+    color: var(--accent);
+    font-weight: bold;
+  }
+
+  /* ── MAIN GRID ── */
+  main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 16px 20px 24px;
+  }
+
+  .items-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  @media (max-width: 900px) {
+    .items-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  }
+
+  @media (max-width: 560px) {
+    .items-grid { grid-template-columns: repeat(2, 1fr); gap: 5px; }
+  }
+
+  /* ── ITEM CARD ── */
+  .item-card {
+    position: relative;
+    aspect-ratio: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color 0.18s, transform 0.18s;
+  }
+
+  .item-card:hover {
+    border-color: var(--accent);
+    transform: scale(1.02);
+    z-index: 2;
+  }
+
+  .item-card:hover .card-overlay-hint {
+    opacity: 1;
+  }
+
+  .item-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    padding: 6px;
+    background: transparent;
+  }
+
+  .item-img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .placeholder-icon {
+    width: 40%;
+    height: 40%;
+    opacity: 0.08;
+    background: var(--text-muted);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='3' y='3' width='18' height='18' rx='2'/%3E%3C/svg%3E") center/contain no-repeat;
+  }
+
+  .card-rare-dot {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .card-overlay-hint {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    opacity: 0;
+    transition: opacity 0.18s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card-overlay-hint span {
+    font-family: 'Orbitron', monospace;
+    font-size: 8px;
+    letter-spacing: 0.15em;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+  }
+
+  /* ── PAGINATION ── */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 24px 20px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .page-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text-dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    padding: 7px 12px;
+    cursor: pointer;
+    min-width: 38px;
+    text-align: center;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+
+  .page-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .page-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+    font-weight: bold;
+  }
+
+  .page-btn.ellipsis {
+    border-color: transparent;
+    background: transparent;
+    cursor: default;
+    color: var(--text-muted);
+  }
+
+  .page-btn.ellipsis:hover { border-color: transparent; color: var(--text-muted); }
+
+  .page-nav-btn {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--text-dim);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 7px 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+
+  .page-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .page-nav-btn:disabled { opacity: 0.2; cursor: default; }
+  .page-nav-btn:disabled:hover { border-color: var(--border2); color: var(--text-dim); }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    grid-column: 1 / -1;
+  }
+
+  .empty-state-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .empty-state-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── LOADING STATE ── */
+  .loading-screen {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    transition: opacity 0.4s;
+  }
+
+  .loading-screen.hidden { opacity: 0; pointer-events: none; }
+
+  .loading-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(14px, 3vw, 22px);
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-shadow: 0 0 30px var(--accent-glow);
+  }
+
+  .loading-bar-wrap {
+    width: 220px;
+    height: 2px;
+    background: var(--surface3);
+    overflow: hidden;
+  }
+
+  .loading-bar-inner {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.3s;
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  .loading-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── OVERLAY ── */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s;
+  }
+
+  .overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .overlay-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    backdrop-filter: blur(6px);
+    cursor: pointer;
+  }
+
+  .overlay-card {
+    position: relative;
+    z-index: 1;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(12px) scale(0.97);
+    transition: transform 0.22s;
+  }
+
+  .overlay.open .overlay-card {
+    transform: translateY(0) scale(1);
+  }
+
+  .overlay-card::-webkit-scrollbar { width: 3px; }
+  .overlay-card::-webkit-scrollbar-track { background: transparent; }
+  .overlay-card::-webkit-scrollbar-thumb { background: var(--border2); }
+
+  .overlay-img-wrap {
+    position: relative;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .overlay-img {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    display: block;
+    padding: 12px;
+  }
+
+  .overlay-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid var(--border2);
+    color: var(--text-dim);
+    font-size: 14px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+  }
+
+  .overlay-close:hover { border-color: var(--accent); color: var(--accent); }
+
+  .overlay-rare-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+  }
+
+  .overlay-details {
+    padding: 20px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .detail-row {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .detail-row:last-child { border-bottom: none; }
+
+  .detail-key {
+    font-family: 'Orbitron', monospace;
+    font-size: 8.5px;
+    letter-spacing: 0.18em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    padding: 11px 0 11px 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .detail-val {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    padding: 10px 0 10px 12px;
+    display: flex;
+    align-items: center;
+    word-break: break-all;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+  }
+
+  .detail-val.mono {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+  }
+
+  .detail-val.description {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    line-height: 1.55;
+    align-items: flex-start;
+    padding-top: 11px;
+  }
+
+  .rare-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .overlay-img-loading {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── RARE COLORS ── */
+  .rare-NONE { color: var(--rare-none); background: rgba(136,136,136,0.1); }
+  .rare-WHITE { color: var(--rare-white); background: rgba(224,224,224,0.08); }
+  .rare-BLUE { color: var(--rare-blue); background: rgba(77,166,255,0.1); }
+  .rare-GREEN { color: var(--rare-green); background: rgba(76,255,145,0.1); }
+  .rare-PURPLE { color: var(--rare-purple); background: rgba(192,132,252,0.1); }
+  .rare-PURPLE_PLUS { color: var(--rare-purple-plus); background: rgba(224,64,251,0.1); }
+  .rare-ORANGE { color: var(--rare-orange); background: rgba(255,152,0,0.1); }
+  .rare-ORANGE_PLUS { color: var(--rare-orange-plus); background: rgba(255,107,0,0.1); }
+  .rare-RED { color: var(--rare-red); background: rgba(255,68,68,0.1); }
+
+  .dot-NONE { background: var(--rare-none); }
+  .dot-WHITE { background: var(--rare-white); }
+  .dot-BLUE { background: var(--rare-blue); }
+  .dot-GREEN { background: var(--rare-green); }
+  .dot-PURPLE { background: var(--rare-purple); }
+  .dot-PURPLE_PLUS { background: var(--rare-purple-plus); }
+  .dot-ORANGE { background: var(--rare-orange); }
+  .dot-ORANGE_PLUS { background: var(--rare-orange-plus); }
+  .dot-RED { background: var(--rare-red); }
+
+  .bar-NONE { background: var(--rare-none); }
+  .bar-WHITE { background: var(--rare-white); }
+  .bar-BLUE { background: var(--rare-blue); box-shadow: 0 0 8px var(--rare-blue); }
+  .bar-GREEN { background: var(--rare-green); box-shadow: 0 0 8px var(--rare-green); }
+  .bar-PURPLE { background: var(--rare-purple); box-shadow: 0 0 8px var(--rare-purple); }
+  .bar-PURPLE_PLUS { background: var(--rare-purple-plus); box-shadow: 0 0 12px var(--rare-purple-plus); }
+  .bar-ORANGE { background: var(--rare-orange); box-shadow: 0 0 8px var(--rare-orange); }
+  .bar-ORANGE_PLUS { background: var(--rare-orange-plus); box-shadow: 0 0 12px var(--rare-orange-plus); }
+  .bar-RED { background: var(--rare-red); box-shadow: 0 0 12px var(--rare-red); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: #000; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); }
+
+  /* ── TABLET ADJUSTMENTS ── */
+  @media (min-width: 600px) and (max-width: 1024px) {
+    .overlay-card { max-width: 420px; }
+    .overlay-img { width: 180px; height: 180px; }
+    .overlay-img-wrap { min-height: 190px; }
+  }
+
+  /* ── DESKTOP ── */
+  @media (min-width: 1025px) {
+    .overlay-card { max-width: 500px; }
+    .overlay-img { width: 220px; height: 220px; }
+    .overlay-img-wrap { min-height: 250px; }
+    .item-card:hover .card-overlay-hint { opacity: 1; }
+  }
+
+  @media (max-width: 560px) {
+    main { padding: 10px 10px 20px; }
+    .controls-row { grid-template-columns: 1fr; }
+    .filter-btn-group { display: grid; grid-template-columns: repeat(3, 1fr); }
+    .filter-btn { text-align: center; }
+    .overlay-img { width: 150px; height: 150px; }
+    .overlay-img-wrap { min-height: 170px; }
+    .detail-row { grid-template-columns: 90px 1fr; }
+  }
+</style>
 </head>
 <body>
-<div class="app-container">
-    <div class="site-header">
-        <h1>KHUSHI ITEMS INFO</h1>
-    </div>
 
-    <!-- Top bar: search + 3 filter buttons + reset -->
-    <div class="top-controls">
-        <input type="text" id="searchInput" class="search-input" placeholder="Search by ID, name or icon">
-        <div class="filter-btn-group">
-            <button id="filterTagBtn" class="filter-toggle-btn">Tag</button>
-            <button id="filterRareBtn" class="filter-toggle-btn">Rare</button>
-            <button id="filterTypeBtn" class="filter-toggle-btn">Type</button>
-        </div>
-        <button id="resetFilters" class="reset-icon">Reset</button>
-    </div>
-
-    <!-- collapsible filter panels (Tag, Rare, Type) -->
-    <div id="filterPanels" class="filter-panels">
-        <div class="filter-group" id="tagGroup">
-            <label>TAG</label>
-            <select id="tagFilter" class="filter-select"></select>
-        </div>
-        <div class="filter-group" id="rareGroup">
-            <label>RARE</label>
-            <select id="rareFilter" class="filter-select"></select>
-        </div>
-        <div class="filter-group" id="typeGroup">
-            <label>TYPE</label>
-            <select id="typeFilter" class="filter-select"></select>
-        </div>
-    </div>
-
-    <div id="itemsGrid" class="items-grid"></div>
-    <div id="paginationContainer" class="pagination"></div>
-    <footer>KHUSHI ARCHIVE • tap image for details</footer>
+<!-- LOADING SCREEN -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-title">KHUSHI ITEMS INFO</div>
+  <div class="loading-bar-wrap">
+    <div class="loading-bar-inner" id="loadingBar"></div>
+  </div>
+  <div class="loading-text" id="loadingText">LOADING DATA...</div>
 </div>
 
-<!-- Overlay (only shows existing fields, no emojis) -->
-<div id="overlay" class="overlay">
-    <div class="overlay-card">
-        <div class="overlay-img">
-            <img id="overlayImage" src="" alt="item preview">
-        </div>
-        <div id="overlayDetailsContainer"></div>
-        <button class="close-overlay" id="closeOverlayBtn">Close</button>
+<!-- HEADER -->
+<header id="siteHeader" style="display:none">
+  <div class="header-inner">
+    <div class="site-title">KHUSHI ITEMS INFO</div>
+    <div class="controls-row">
+      <div class="search-wrap">
+        <input
+          class="search-input"
+          type="text"
+          id="searchInput"
+          placeholder="Search by item ID, name, or icon name..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+      <div class="filter-btn-group">
+        <button class="filter-btn" id="btnFilterType" onclick="togglePanel('type')">TYPE</button>
+        <button class="filter-btn" id="btnFilterRare" onclick="togglePanel('rare')">RARE</button>
+        <button class="filter-btn" id="btnFilterTag" onclick="togglePanel('tag')">TAG</button>
+      </div>
     </div>
+  </div>
+</header>
+
+<!-- FILTER PANELS -->
+<div class="filter-panel" id="panelType">
+  <div class="filter-group">
+    <div class="filter-label">Type</div>
+    <select class="filter-select" id="selectType" onchange="applyFilters()">
+      <option value="">All Types</option>
+    </select>
+  </div>
+  <button class="filter-clear-btn" onclick="clearFilter('type')">Clear</button>
+</div>
+
+<div class="filter-panel" id="panelRare">
+  <div class="filter-group">
+    <div class="filter-label">Rarity</div>
+    <select class="filter-select" id="selectRare" onchange="applyFilters()">
+      <option value="">All Rarities</option>
+      <option value="NONE">NONE</option>
+      <option value="WHITE">WHITE</option>
+      <option value="BLUE">BLUE</option>
+      <option value="GREEN">GREEN</option>
+      <option value="PURPLE">PURPLE</option>
+      <option value="PURPLE_PLUS">PURPLE PLUS</option>
+      <option value="ORANGE">ORANGE</option>
+      <option value="ORANGE_PLUS">ORANGE PLUS</option>
+      <option value="RED">RED</option>
+    </select>
+  </div>
+  <button class="filter-clear-btn" onclick="clearFilter('rare')">Clear</button>
+</div>
+
+<div class="filter-panel" id="panelTag">
+  <div class="filter-group">
+    <div class="filter-label">Tag</div>
+    <select class="filter-select" id="selectTag" onchange="applyFilters()">
+      <option value="">All Tags</option>
+    </select>
+  </div>
+  <button class="filter-clear-btn" onclick="clearFilter('tag')">Clear</button>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar" id="statsBar" style="display:none">
+  <span class="stats-text">Showing <span class="stats-count" id="statsCount">0</span> items</span>
+  <span class="stats-text" id="statsPage"></span>
+</div>
+
+<!-- MAIN CONTENT -->
+<main id="mainContent" style="display:none">
+  <div class="items-grid" id="itemsGrid"></div>
+</main>
+
+<!-- PAGINATION -->
+<div class="pagination" id="pagination" style="display:none"></div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="overlay-backdrop" onclick="closeOverlay()"></div>
+  <div class="overlay-card" id="overlayCard">
+    <div class="overlay-img-wrap" id="overlayImgWrap">
+      <div class="overlay-img-loading" id="overlayLoader"></div>
+      <img class="overlay-img" id="overlayImg" style="display:none" alt="" />
+      <div class="overlay-rare-bar" id="overlayRareBar"></div>
+      <button class="overlay-close" onclick="closeOverlay()">&#x2715;</button>
+    </div>
+    <div class="overlay-details" id="overlayDetails"></div>
+  </div>
 </div>
 
 <script>
-    // ---------- DATA ----------
-    let fullItemData = [];
-    let filteredItems = [];
-    let currentPage = 1;
-    const ITEMS_PER_PAGE = 80;   // 4x20
+  // ── CONFIG ──
+  const ITEMS_PER_PAGE = 80; // 4 columns × 20 rows
+  const CDN = id => `https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/${id}.png`;
 
-    // filter sets
-    let tagsSet = new Set();
-    let raresSet = new Set();
-    let typesSet = new Set();
+  // ── STATE ──
+  let allItems = [];
+  let filteredItems = [];
+  let currentPage = 1;
+  let totalPages = 1;
+  let activePanels = { type: false, rare: false, tag: false };
 
-    // DOM elements
-    const gridContainer = document.getElementById('itemsGrid');
-    const paginationDiv = document.getElementById('paginationContainer');
-    const searchInput = document.getElementById('searchInput');
-    const tagFilter = document.getElementById('tagFilter');
-    const rareFilter = document.getElementById('rareFilter');
-    const typeFilter = document.getElementById('typeFilter');
-    const resetBtn = document.getElementById('resetFilters');
-    const filterPanels = document.getElementById('filterPanels');
-    const filterTagBtn = document.getElementById('filterTagBtn');
-    const filterRareBtn = document.getElementById('filterRareBtn');
-    const filterTypeBtn = document.getElementById('filterTypeBtn');
-    const overlayDiv = document.getElementById('overlay');
-    const overlayImage = document.getElementById('overlayImage');
-    const overlayDetailsContainer = document.getElementById('overlayDetailsContainer');
-    const closeOverlayBtn = document.getElementById('closeOverlayBtn');
+  // ── BOOT ──
+  async function init() {
+    try {
+      updateLoader(10, 'FETCHING DATA...');
+      const res = await fetch('./Upto-ob53-item-data.json');
+      if (!res.ok) throw new Error('Failed to load JSON');
+      updateLoader(60, 'PARSING ITEMS...');
+      const raw = await res.json();
+      updateLoader(80, 'PROCESSING...');
+      allItems = raw.filter(i => i.itemID);
+      buildTypeOptions();
+      buildTagOptions();
+      filteredItems = [...allItems];
+      updateLoader(100, 'READY');
+      await delay(300);
+      showApp();
+      renderPage();
+    } catch(e) {
+      document.getElementById('loadingText').textContent = 'ERROR: ' + e.message + ' — Place Upto-ob53-item-data.json in the same folder.';
+    }
+  }
 
-    let currentOverlayItem = null;
+  function updateLoader(pct, text) {
+    document.getElementById('loadingBar').style.width = pct + '%';
+    document.getElementById('loadingText').textContent = text;
+  }
 
-    // load JSON
-    async function loadData() {
-        try {
-            const response = await fetch('./Upto-ob53-item-data.json');
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            fullItemData = await response.json();
-            if (!Array.isArray(fullItemData)) fullItemData = [];
-            buildDynamicFilters();
-            applyFiltersAndRender();
-        } catch (err) {
-            console.error(err);
-            gridContainer.innerHTML = `<div class="no-results">ERROR: Unable to load Upto-ob53-item-data.json<br>Make sure file exists and server is active (GitHub Pages works).</div>`;
-            paginationDiv.innerHTML = '';
-        }
+  function showApp() {
+    document.getElementById('loadingScreen').classList.add('hidden');
+    document.getElementById('siteHeader').style.display = '';
+    document.getElementById('statsBar').style.display = '';
+    document.getElementById('mainContent').style.display = '';
+    document.getElementById('pagination').style.display = '';
+  }
+
+  function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  // ── OPTIONS ──
+  function buildTypeOptions() {
+    const types = [...new Set(allItems.map(i => i.type).filter(t => t && t.trim()))].sort();
+    const sel = document.getElementById('selectType');
+    types.forEach(t => {
+      const o = document.createElement('option');
+      o.value = t; o.textContent = t;
+      sel.appendChild(o);
+    });
+  }
+
+  function buildTagOptions() {
+    const tags = [...new Set(allItems.map(i => i.tag).filter(t => t && t.trim()))].sort();
+    const sel = document.getElementById('selectTag');
+    tags.forEach(t => {
+      const o = document.createElement('option');
+      o.value = t; o.textContent = t;
+      sel.appendChild(o);
+    });
+  }
+
+  // ── FILTERS ──
+  let searchTimeout = null;
+  document.getElementById('searchInput').addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(applyFilters, 180);
+  });
+
+  function applyFilters() {
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    const typeF = document.getElementById('selectType').value;
+    const rareF = document.getElementById('selectRare').value;
+    const tagF = document.getElementById('selectTag').value;
+
+    filteredItems = allItems.filter(item => {
+      if (typeF && item.type !== typeF) return false;
+      if (rareF && item.Rare !== rareF) return false;
+      if (tagF && item.tag !== tagF) return false;
+      if (q) {
+        const inId = String(item.itemID).includes(q);
+        const inName = (item.name || '').toLowerCase().includes(q);
+        const inIcon = (item.icon || '').toLowerCase().includes(q);
+        if (!inId && !inName && !inIcon) return false;
+      }
+      return true;
+    });
+
+    currentPage = 1;
+    renderPage();
+  }
+
+  function togglePanel(key) {
+    const panels = { type: 'panelType', rare: 'panelRare', tag: 'panelTag' };
+    const btns = { type: 'btnFilterType', rare: 'btnFilterRare', tag: 'btnFilterTag' };
+
+    Object.keys(panels).forEach(k => {
+      if (k !== key) {
+        document.getElementById(panels[k]).classList.remove('open');
+        document.getElementById(btns[k]).classList.remove('active');
+        activePanels[k] = false;
+      }
+    });
+
+    activePanels[key] = !activePanels[key];
+    document.getElementById(panels[key]).classList.toggle('open', activePanels[key]);
+    document.getElementById(btns[key]).classList.toggle('active', activePanels[key]);
+  }
+
+  function clearFilter(key) {
+    if (key === 'type') document.getElementById('selectType').value = '';
+    if (key === 'rare') document.getElementById('selectRare').value = '';
+    if (key === 'tag') document.getElementById('selectTag').value = '';
+    togglePanel(key);
+    applyFilters();
+  }
+
+  // ── RENDER ──
+  function renderPage() {
+    totalPages = Math.max(1, Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    const end = start + ITEMS_PER_PAGE;
+    const pageItems = filteredItems.slice(start, end);
+
+    renderGrid(pageItems);
+    renderPagination();
+    updateStats();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function renderGrid(items) {
+    const grid = document.getElementById('itemsGrid');
+    grid.innerHTML = '';
+
+    if (!items.length) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.innerHTML = `<div class="empty-state-title">NO ITEMS FOUND</div><div class="empty-state-sub">Try adjusting your search or filters</div>`;
+      grid.appendChild(empty);
+      return;
     }
 
-    // dynamic extraction (OB1..OB99 and all tags/rares/types)
-    function buildDynamicFilters() {
-        tagsSet.clear();
-        raresSet.clear();
-        typesSet.clear();
-        for (let item of fullItemData) {
-            if (item.tag && typeof item.tag === 'string' && item.tag.trim() !== "") tagsSet.add(item.tag);
-            if (item.Rare && typeof item.Rare === 'string' && item.Rare.trim() !== "") raresSet.add(item.Rare);
-            if (item.type && typeof item.type === 'string' && item.type.trim() !== "") typesSet.add(item.type);
-        }
-        // sort tags with natural OB order (OB1, OB2 ... OB99)
-        const sortedTags = Array.from(tagsSet).sort((a,b) => {
-            const aIsOb = a.toUpperCase().startsWith('OB');
-            const bIsOb = b.toUpperCase().startsWith('OB');
-            if (aIsOb && bIsOb) {
-                const numA = parseInt(a.slice(2)) || 0;
-                const numB = parseInt(b.slice(2)) || 0;
-                return numA - numB;
-            }
-            if (aIsOb) return -1;
-            if (bIsOb) return 1;
-            return a.localeCompare(b);
-        });
-        const sortedRares = Array.from(raresSet).sort();
-        const sortedTypes = Array.from(typesSet).sort();
-        populateSelect(tagFilter, sortedTags, "All Tags");
-        populateSelect(rareFilter, sortedRares, "All Rarities");
-        populateSelect(typeFilter, sortedTypes, "All Types");
-    }
+    items.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'item-card';
+      card.onclick = () => openOverlay(item);
 
-    function populateSelect(selectEl, optionsArr, defaultLabel) {
-        selectEl.innerHTML = `<option value="">${defaultLabel}</option>`;
-        optionsArr.forEach(opt => {
-            const option = document.createElement('option');
-            option.value = opt;
-            option.textContent = opt;
-            selectEl.appendChild(option);
-        });
-    }
+      const rare = (item.Rare || 'NONE').replace(/[^A-Z_]/g, '');
+      card.innerHTML = `
+        <div class="item-img-placeholder" id="ph-${item.itemID}">
+          <div class="placeholder-icon"></div>
+        </div>
+        <div class="card-rare-dot dot-${rare}"></div>
+        <div class="card-overlay-hint"><span>View Details</span></div>
+      `;
 
-    // filter logic
-    function getFilteredItems() {
-        let results = [...fullItemData];
-        const searchTerm = searchInput.value.trim().toLowerCase();
-        if (searchTerm) {
-            results = results.filter(item => {
-                const idMatch = item.itemID?.toString().includes(searchTerm);
-                const nameMatch = item.name?.toLowerCase().includes(searchTerm);
-                const iconMatch = item.icon?.toLowerCase().includes(searchTerm);
-                return idMatch || nameMatch || iconMatch;
-            });
-        }
-        const tagVal = tagFilter.value;
-        if (tagVal) results = results.filter(item => item.tag === tagVal);
-        const rareVal = rareFilter.value;
-        if (rareVal) results = results.filter(item => item.Rare === rareVal);
-        const typeVal = typeFilter.value;
-        if (typeVal) results = results.filter(item => item.type === typeVal);
-        return results;
-    }
+      grid.appendChild(card);
 
-    function applyFiltersAndRender() {
-        filteredItems = getFilteredItems();
-        currentPage = 1;
-        renderCurrentPage();
-        renderPagination();
-    }
+      // Lazy load image
+      const img = new Image();
+      img.onload = () => {
+        const ph = document.getElementById(`ph-${item.itemID}`);
+        if (ph) {
+          const imgEl = document.createElement('img');
+          imgEl.className = 'item-img';
+          imgEl.src = img.src;
+          imgEl.alt = item.name || item.itemID;
+          ph.replaceWith(imgEl);
+        }
+      };
+      img.onerror = () => {}; // keep placeholder
+      img.src = CDN(item.itemID);
+    });
+  }
 
-    // render grid (square images)
-    function renderCurrentPage() {
-        if (!filteredItems.length) {
-            gridContainer.innerHTML = `<div class="no-results">No items match the current filters.</div>`;
-            return;
-        }
-        const start = (currentPage-1) * ITEMS_PER_PAGE;
-        const pageItems = filteredItems.slice(start, start + ITEMS_PER_PAGE);
-        if (pageItems.length === 0 && currentPage > 1) {
-            currentPage = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
-            renderCurrentPage();
-            return;
-        }
-        gridContainer.innerHTML = '';
-        for (let item of pageItems) {
-            const card = document.createElement('div');
-            card.className = 'item-card';
-            const itemId = item.itemID;
-            const imageUrl = itemId ? `https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/${itemId}.png` : '';
-            const displayName = (item.name && item.name.trim()) ? item.name : `Item #${itemId}`;
-            const tagHtml = item.tag ? `<span class="badge">${escapeHtml(item.tag)}</span>` : '';
-            const rareHtml = (item.Rare && item.Rare !== "NONE") ? `<span class="badge">${escapeHtml(item.Rare)}</span>` : '';
-            const typeHtml = item.type ? `<span class="badge">${escapeHtml(item.type)}</span>` : '';
-            
-            card.innerHTML = `
-                <div class="card-img-square">
-                    <img class="item-img" data-src="${imageUrl}" alt="${escapeHtml(displayName)}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 24 24' fill='%23222'%3E%3Crect width='24' height='24' fill='%230a0a0a'/%3E%3Ctext x='6' y='16' fill='%23555' font-size='10'%3E⏺%3C/text%3E%3C/svg%3E">
-                </div>
-                <div class="item-info">
-                    <div class="item-name" title="${escapeHtml(displayName)}">${escapeHtml(displayName)}</div>
-                    <div class="item-meta">
-                        ${tagHtml} ${rareHtml} ${typeHtml}
-                    </div>
-                </div>
-            `;
-            card.addEventListener('click', (e) => {
-                e.stopPropagation();
-                openOverlay(item);
-            });
-            gridContainer.appendChild(card);
-        }
-        // lazy load images only for current page (performance)
-        const imgs = document.querySelectorAll('.item-img');
-        imgs.forEach(img => {
-            const src = img.getAttribute('data-src');
-            if (src && img.src !== src) {
-                img.src = src;
-                img.onerror = () => { img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 24 24' fill='%23333'%3E%3Crect width='24' height='24' fill='%23101010'/%3E%3Ctext x='6' y='16' fill='%23777' font-size='10'%3E!%3C/text%3E%3C/svg%3E"; };
-            }
-        });
-    }
+  function updateStats() {
+    document.getElementById('statsCount').textContent = filteredItems.length.toLocaleString();
+    document.getElementById('statsPage').textContent =
+      totalPages > 1 ? `— Page ${currentPage} of ${totalPages}` : '';
+  }
 
-    // Overlay logic: only show fields that have valid data (no empty/null, remove full line if missing)
-    function openOverlay(item) {
-        currentOverlayItem = item;
-        const itemId = item.itemID;
-        const imageUrl = itemId ? `https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/${itemId}.png` : '';
-        overlayImage.src = imageUrl;
-        overlayImage.onerror = () => { overlayImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='%23333'%3E%3Crect width='24' height='24' fill='%23111111'/%3E%3Ctext x='6' y='17' fill='%23999' font-size='12'%3E?%3C/text%3E%3C/svg%3E"; };
-        
-        // Build detail rows dynamically, only if value exists and not empty/null
-        let detailsHtml = '';
-        
-        // Item ID
-        if (item.itemID !== undefined && item.itemID !== null && item.itemID !== '') {
-            detailsHtml += `
-                <div class="detail-row">
-                    <span class="detail-label">Item ID</span>
-                    <span class="detail-value">${escapeHtml(String(item.itemID))}</span>
-                </div>
-            `;
-        }
-        // Name
-        if (item.name && typeof item.name === 'string' && item.name.trim() !== '') {
-            detailsHtml += `
-                <div class="detail-row">
-                    <span class="detail-label">Name</span>
-                    <span class="detail-value">${escapeHtml(item.name)}</span>
-                </div>
-            `;
-        }
-        // Icon Name
-        if (item.icon && typeof item.icon === 'string' && item.icon.trim() !== '') {
-            detailsHtml += `
-                <div class="detail-row">
-                    <span class="detail-label">Icon Name</span>
-                    <span class="detail-value">${escapeHtml(item.icon)}</span>
-                </div>
-            `;
-        }
-        // Optional but we also can show Rare, Tag, Type if user wants, but not required — but to be thorough add extra fields only if they exist.
-        if (item.Rare && item.Rare !== 'NONE' && item.Rare.trim() !== '') {
-            detailsHtml += `
-                <div class="detail-row">
-                    <span class="detail-label">Rarity</span>
-                    <span class="detail-value">${escapeHtml(item.Rare)}</span>
-                </div>
-            `;
-        }
-        if (item.tag && item.tag.trim() !== '') {
-            detailsHtml += `
-                <div class="detail-row">
-                    <span class="detail-label">Tag</span>
-                    <span class="detail-value">${escapeHtml(item.tag)}</span>
-                </div>
-            `;
-        }
-        if (item.type && item.type.trim() !== '') {
-            detailsHtml += `
-                <div class="detail-row">
-                    <span class="detail-label">Type</span>
-                    <span class="detail-value">${escapeHtml(item.type)}</span>
-                </div>
-            `;
-        }
-        
-        overlayDetailsContainer.innerHTML = detailsHtml;
-        overlayDiv.classList.add('active');
-    }
+  // ── PAGINATION ──
+  function renderPagination() {
+    const pag = document.getElementById('pagination');
+    pag.innerHTML = '';
 
-    function closeOverlay() {
-        overlayDiv.classList.remove('active');
-        currentOverlayItem = null;
-    }
+    if (totalPages <= 1) return;
 
-    // pagination
-    function renderPagination() {
-        if (!filteredItems.length) {
-            paginationDiv.innerHTML = '';
-            return;
-        }
-        const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
-        if (totalPages <= 1) {
-            paginationDiv.innerHTML = '';
-            return;
-        }
-        let html = '';
-        let start = Math.max(1, currentPage - 3);
-        let end = Math.min(totalPages, currentPage + 3);
-        if (start > 1) html += `<button class="page-btn" data-page="1">1</button>${start>2 ? '<span style="padding:0 4px;">...</span>' : ''}`;
-        for (let i=start; i<=end; i++) {
-            html += `<button class="page-btn ${i===currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
-        }
-        if (end < totalPages) {
-            html += `${end < totalPages-1 ? '<span style="padding:0 4px;">...</span>' : ''}<button class="page-btn" data-page="${totalPages}">${totalPages}</button>`;
-        }
-        paginationDiv.innerHTML = html;
-        document.querySelectorAll('.page-btn[data-page]').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const page = parseInt(btn.getAttribute('data-page'), 10);
-                if (!isNaN(page) && page !== currentPage) {
-                    currentPage = page;
-                    renderCurrentPage();
-                    renderPagination();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            });
-        });
-    }
+    const prev = document.createElement('button');
+    prev.className = 'page-nav-btn';
+    prev.textContent = 'PREV';
+    prev.disabled = currentPage === 1;
+    prev.onclick = () => goPage(currentPage - 1);
+    pag.appendChild(prev);
 
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
+    const pages = buildPageRange(currentPage, totalPages);
+    pages.forEach(p => {
+      const btn = document.createElement('button');
+      if (p === '...') {
+        btn.className = 'page-btn ellipsis';
+        btn.textContent = '...';
+      } else {
+        btn.className = 'page-btn' + (p === currentPage ? ' active' : '');
+        btn.textContent = p;
+        btn.onclick = () => goPage(p);
+      }
+      pag.appendChild(btn);
+    });
 
-    // UI panel toggles (filter buttons)
-    function setupFilterButtons() {
-        filterTagBtn.addEventListener('click', () => {
-            filterPanels.classList.toggle('show');
-            // optional: keep open but just show/hide; if you want to highlight active state
-        });
-        filterRareBtn.addEventListener('click', () => {
-            filterPanels.classList.toggle('show');
-        });
-        filterTypeBtn.addEventListener('click', () => {
-            filterPanels.classList.toggle('show');
-        });
-        // by default panels hidden, click any filter button shows/hides same panel
-        // additional: close if click outside? not needed for simplicity
-    }
+    const next = document.createElement('button');
+    next.className = 'page-nav-btn';
+    next.textContent = 'NEXT';
+    next.disabled = currentPage === totalPages;
+    next.onclick = () => goPage(currentPage + 1);
+    pag.appendChild(next);
+  }
 
-    // event binding
-    function bindEvents() {
-        searchInput.addEventListener('input', () => applyFiltersAndRender());
-        tagFilter.addEventListener('change', () => applyFiltersAndRender());
-        rareFilter.addEventListener('change', () => applyFiltersAndRender());
-        typeFilter.addEventListener('change', () => applyFiltersAndRender());
-        resetBtn.addEventListener('click', () => {
-            searchInput.value = '';
-            tagFilter.value = '';
-            rareFilter.value = '';
-            typeFilter.value = '';
-            applyFiltersAndRender();
-        });
-        closeOverlayBtn.addEventListener('click', closeOverlay);
-        overlayDiv.addEventListener('click', (e) => { if(e.target === overlayDiv) closeOverlay(); });
+  function buildPageRange(cur, total) {
+    if (total <= 9) return Array.from({ length: total }, (_, i) => i + 1);
+    const range = [];
+    const delta = 2;
+    const left = cur - delta, right = cur + delta;
+    let l;
+    for (let i = 1; i <= total; i++) {
+      if (i === 1 || i === total || (i >= left && i <= right)) {
+        range.push(i);
+      }
     }
+    const withDots = [];
+    for (let i = 0; i < range.length; i++) {
+      if (i > 0 && range[i] - range[i - 1] > 1) withDots.push('...');
+      withDots.push(range[i]);
+    }
+    return withDots;
+  }
 
-    function init() {
-        bindEvents();
-        setupFilterButtons();
-        loadData();
-    }
-    init();
+  function goPage(p) {
+    if (p < 1 || p > totalPages) return;
+    currentPage = p;
+    renderPage();
+  }
+
+  // ── OVERLAY ──
+  function openOverlay(item) {
+    const overlay = document.getElementById('overlay');
+    const img = document.getElementById('overlayImg');
+    const loader = document.getElementById('overlayLoader');
+    const rareBar = document.getElementById('overlayRareBar');
+    const details = document.getElementById('overlayDetails');
+
+    // Reset
+    img.style.display = 'none';
+    loader.style.display = 'block';
+    img.src = '';
+
+    const rare = (item.Rare || 'NONE').replace(/[^A-Z_]/g, '');
+    rareBar.className = `overlay-rare-bar bar-${rare}`;
+
+    // Load image
+    const tempImg = new Image();
+    tempImg.onload = () => {
+      img.src = tempImg.src;
+      img.style.display = 'block';
+      loader.style.display = 'none';
+    };
+    tempImg.onerror = () => {
+      loader.style.display = 'none';
+    };
+    tempImg.src = CDN(item.itemID);
+
+    // Build details — skip empty/null fields
+    const fields = [
+      { key: 'Item ID', val: item.itemID, cls: 'mono' },
+      { key: 'Name', val: item.name },
+      { key: 'Icon Name', val: item.icon, cls: 'mono' },
+      { key: 'Type', val: item.type },
+      { key: 'Item Type', val: item.itemType },
+      { key: 'Rarity', val: item.Rare, rare: true },
+      { key: 'Tag', val: item.tag, cls: 'mono' },
+      { key: 'Collection', val: (item.collectionType && item.collectionType !== 'NONE') ? item.collectionType : null },
+      { key: 'Unique', val: item.isUnique === true ? 'YES' : item.isUnique === false ? 'NO' : null },
+      { key: 'Description', val: item.description, cls: 'description' },
+    ];
+
+    details.innerHTML = '';
+    fields.forEach(f => {
+      const v = f.val;
+      if (v === null || v === undefined || v === '' || v === 'undefined') return;
+      const row = document.createElement('div');
+      row.className = 'detail-row';
+
+      const key = document.createElement('div');
+      key.className = 'detail-key';
+      key.textContent = f.key;
+
+      const val = document.createElement('div');
+      val.className = 'detail-val' + (f.cls ? ' ' + f.cls : '');
+
+      if (f.rare) {
+        const badge = document.createElement('span');
+        badge.className = `rare-badge rare-${rare}`;
+        badge.textContent = v;
+        val.appendChild(badge);
+      } else {
+        val.textContent = v;
+      }
+
+      row.appendChild(key);
+      row.appendChild(val);
+      details.appendChild(row);
+    });
+
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeOverlay() {
+    document.getElementById('overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Close on ESC
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeOverlay();
+  });
+
+  // ── START ──
+  init();
 </script>
 </body>
 </html>
