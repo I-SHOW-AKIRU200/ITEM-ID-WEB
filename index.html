@@ -3,349 +3,373 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Free Fire Arsenal - Item Catalog</title>
+    <title>FF Arsenal - Item Explorer</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none; /* prevent accidental selection while scrolling */
         }
 
         body {
-            background: #0b0f1c;
-            font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, 'Roboto', sans-serif;
-            overflow-x: hidden; /* NO horizontal scroll */
-            overflow-y: auto;
-            color: #eef2ff;
+            background: #0a0e17;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
+            color: #edf2ff;
         }
 
         /* main container */
         .app-container {
-            max-width: 100vw;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 1rem 2rem;
             overflow-x: hidden;
-            padding: 1.2rem 1rem 2rem;
         }
 
-        /* header & search area */
+        /* header */
         .header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
-
         .header h1 {
-            font-size: 1.9rem;
-            background: linear-gradient(135deg, #ff9800, #ff5722);
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #ffb347, #ff6b2b);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            letter-spacing: 1px;
         }
 
-        .header p {
-            color: #8e9aaf;
-            font-size: 0.85rem;
-        }
-
-        /* filter bar - desktop / tablet friendly */
-        .filter-section {
+        /* filter bar: single line on mobile + desktop */
+        .filter-bar {
             background: #11161f;
-            border-radius: 28px;
-            padding: 1rem 1.2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 6px 14px rgba(0,0,0,0.3);
-            border: 1px solid #2a2f3f;
-        }
-
-        .search-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .search-input {
-            flex: 2;
-            min-width: 180px;
-            background: #1e2533;
-            border: none;
-            padding: 12px 18px;
             border-radius: 60px;
-            color: white;
-            font-size: 0.9rem;
-            outline: none;
-            transition: 0.2s;
-            border: 1px solid #2e3a48;
-        }
-
-        .search-input:focus {
-            border-color: #ff9800;
-            background: #0f141f;
-        }
-
-        .filter-group {
+            padding: 0.5rem 0.8rem;
+            margin-bottom: 1.8rem;
+            border: 1px solid #262e3e;
             display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
+            flex-wrap: nowrap;
             align-items: center;
+            gap: 0.5rem;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            -webkit-overflow-scrolling: touch;
         }
-
+        .filter-bar::-webkit-scrollbar {
+            height: 3px;
+        }
         .filter-select {
-            background: #1e2533;
-            border: 1px solid #2e3a48;
-            padding: 10px 14px;
-            border-radius: 40px;
-            color: #f0f3fa;
-            font-size: 0.8rem;
-            cursor: pointer;
-            outline: none;
-            min-width: 110px;
-        }
-
-        .reset-btn {
-            background: #2c2f3f;
+            background: #1e2535;
             border: none;
-            padding: 8px 20px;
+            padding: 0.6rem 0.9rem;
             border-radius: 40px;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+            outline: none;
+            border: 1px solid #2e3a4a;
+        }
+        .search-input {
+            background: #1e2535;
+            border: 1px solid #2e3a4a;
+            padding: 0.6rem 1rem;
+            border-radius: 40px;
+            color: white;
+            font-size: 0.75rem;
+            min-width: 140px;
+            flex: 1;
+            outline: none;
+        }
+        .reset-icon {
+            background: #2d3448;
+            border: none;
+            border-radius: 40px;
+            padding: 0.5rem 1rem;
             color: #ffbc6e;
+            font-size: 0.75rem;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        @media (max-width: 680px) {
+            .filter-bar {
+                border-radius: 28px;
+                gap: 0.4rem;
+            }
+            .filter-select, .search-input, .reset-icon {
+                font-size: 0.7rem;
+                padding: 0.5rem 0.7rem;
+            }
+            .reset-icon span {
+                display: none;
+            }
+            .reset-icon::before {
+                content: "⟳";
+                font-size: 1.1rem;
+            }
         }
 
-        .reset-btn:hover {
-            background: #3a3f55;
-            color: #ffa040;
-        }
-
-        /* items grid: horizontal 4 columns, vertical unlimited (scroll) */
-        /* DESKTOP: exactly 4 per row */
-        /* TABLET/IPAD: 4 per row still, but smaller gap */
+        /* grid: 4 columns, square images */
         .items-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 1.2rem;
-            margin: 1.5rem 0 2rem;
+            gap: 1rem;
+            margin: 1.2rem 0 2rem;
         }
-
-        /* item card */
+        /* square card with curved corner */
         .item-card {
-            background: #121724;
-            border-radius: 24px;
+            background: #11161f;
+            border-radius: 20px;
             overflow: hidden;
             transition: transform 0.2s, box-shadow 0.2s;
-            border: 1px solid #282e3e;
-            backdrop-filter: blur(2px);
+            cursor: pointer;
+            border: 1px solid #262e3e;
             display: flex;
             flex-direction: column;
-            cursor: pointer;
         }
-
         .item-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.4);
             border-color: #ff9f4a;
         }
-
-        .card-img {
-            background: #0a0f17;
+        /* square image container */
+        .card-img-square {
+            aspect-ratio: 1 / 1;
+            background: #0a0f18;
             display: flex;
-            justify-content: center;
             align-items: center;
-            padding: 1.2rem 0.5rem;
-            min-height: 150px;
+            justify-content: center;
+            padding: 1rem;
         }
-
-        .card-img img {
-            width: 90px;
-            height: 90px;
+        .card-img-square img {
+            width: 80%;
+            height: 80%;
             object-fit: contain;
-            filter: drop-shadow(0 4px 6px #00000055);
             transition: 0.2s;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
         }
-
         .item-info {
-            padding: 0.8rem 0.8rem 1rem;
+            padding: 0.7rem;
             background: #0e131e;
+            border-top: 1px solid #1f2535;
         }
-
         .item-name {
-            font-weight: 700;
-            font-size: 0.9rem;
+            font-weight: 600;
+            font-size: 0.8rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            color: #ffcd94;
+            color: #ffd966;
         }
-
-        .item-details {
-            font-size: 0.7rem;
-            color: #9aa7c2;
-            margin-top: 6px;
+        .item-meta {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .badge {
-            background: #20273b;
-            padding: 2px 8px;
-            border-radius: 20px;
+            gap: 5px;
+            margin-top: 6px;
             font-size: 0.65rem;
-            font-weight: 500;
         }
-
+        .badge {
+            background: #1f2a3a;
+            padding: 2px 8px;
+            border-radius: 30px;
+            color: #bfc9e6;
+        }
         .badge.rare {
-            background: #673ab7;
-            color: white;
+            background: #6a2c9e;
+            color: #f0d5ff;
         }
 
+        /* overlay screen */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.92);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s ease;
+        }
+        .overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .overlay-card {
+            background: #121826;
+            max-width: 90vw;
+            width: 380px;
+            border-radius: 36px;
+            padding: 1.2rem;
+            text-align: center;
+            border: 1px solid #ffa344;
+            box-shadow: 0 25px 40px black;
+        }
+        .overlay-img {
+            aspect-ratio: 1/1;
+            background: #0a0f17;
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        .overlay-img img {
+            width: 75%;
+            height: 75%;
+            object-fit: contain;
+        }
+        .detail-row {
+            background: #0c111c;
+            margin: 10px 0;
+            padding: 10px 12px;
+            border-radius: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            word-break: break-all;
+        }
+        .copy-btn {
+            background: #2d374b;
+            border: none;
+            border-radius: 40px;
+            padding: 5px 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: white;
+            font-size: 0.7rem;
+            transition: 0.1s;
+        }
+        .copy-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: none;
+            stroke: #ffbc6e;
+            stroke-width: 2;
+        }
+        .close-overlay {
+            background: #ff5722;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 60px;
+            margin-top: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
         /* pagination */
         .pagination {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 8px;
-            margin: 30px 0 20px;
+            gap: 0.5rem;
+            margin-top: 20px;
         }
-
         .page-btn {
             background: #1a1f2c;
             border: none;
-            padding: 8px 16px;
-            border-radius: 40px;
-            font-weight: bold;
-            color: #ccd6f0;
+            padding: 6px 14px;
+            border-radius: 30px;
+            color: #cdd9ff;
+            font-weight: 500;
             cursor: pointer;
-            transition: 0.2s;
-            min-width: 44px;
         }
-
         .page-btn.active {
             background: #ff7e2e;
             color: white;
-            box-shadow: 0 0 6px #ff8c42;
         }
-
-        .page-btn:hover:not(.active) {
-            background: #2d3448;
-        }
-
-        /* load more / loading state */
-        .loading-placeholder {
-            text-align: center;
-            padding: 40px;
-            color: #aaa;
-        }
-
         .no-results {
             text-align: center;
             padding: 3rem;
-            font-size: 1.2rem;
-            background: #11161f;
-            border-radius: 40px;
-            margin-top: 20px;
+            background: #0e1320;
+            border-radius: 32px;
         }
-
-        /* responsive: for tablet/ipad we keep 4 columns but slightly smaller gap */
-        @media (max-width: 768px) {
-            .items-grid {
-                gap: 0.9rem;
-            }
-            .card-img img {
-                width: 70px;
-                height: 70px;
-            }
-            .item-name {
-                font-size: 0.75rem;
-            }
-            .badge {
-                font-size: 0.55rem;
-            }
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #5a6885;
+            margin-top: 2rem;
         }
-
-        /* small phones: but still 4 columns, but text smaller */
-        @media (max-width: 540px) {
+        @media (max-width: 600px) {
             .items-grid {
-                gap: 0.6rem;
-            }
-            .item-info {
-                padding: 0.5rem;
+                gap: 0.7rem;
             }
             .item-name {
                 font-size: 0.7rem;
             }
             .badge {
-                font-size: 0.5rem;
-                padding: 2px 5px;
+                font-size: 0.55rem;
             }
-            .card-img img {
-                width: 55px;
-                height: 55px;
-            }
-            .filter-select, .search-input {
-                font-size: 0.75rem;
-                padding: 8px 12px;
-            }
-        }
-
-        /* disable horizontal overflow globally */
-        body, .app-container, .items-grid {
-            overflow-x: hidden;
-        }
-
-        footer {
-            text-align: center;
-            font-size: 0.7rem;
-            color: #5f6b89;
-            margin-top: 2rem;
         }
     </style>
 </head>
 <body>
 <div class="app-container" id="appRoot">
     <div class="header">
-        <h1>🔥 Free Fire Armory</h1>
-        <p>Items | Characters | Weapons | Crates & more</p>
+        <h1>🔥 FF ITEM VAULT</h1>
     </div>
 
-    <div class="filter-section">
-        <div class="search-row">
-            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search by ID, Name, Icon name...">
-        </div>
-        <div class="filter-group">
-            <select id="tagFilter" class="filter-select">
-                <option value="">🏷️ All Tags</option>
-            </select>
-            <select id="rareFilter" class="filter-select">
-                <option value="">✨ All Rarities</option>
-            </select>
-            <select id="typeFilter" class="filter-select">
-                <option value="">📦 All Types</option>
-            </select>
-            <button id="resetFilters" class="reset-btn">⟳ Reset</button>
-        </div>
+    <!-- FILTER BAR - single line scrollable, no extra rows -->
+    <div class="filter-bar">
+        <input type="text" id="searchInput" class="search-input" placeholder="ID / Name / Icon">
+        <select id="tagFilter" class="filter-select"><option value="">🏷️ Tag</option></select>
+        <select id="rareFilter" class="filter-select"><option value="">✨ Rare</option></select>
+        <select id="typeFilter" class="filter-select"><option value="">📦 Type</option></select>
+        <button id="resetFilters" class="reset-icon"><span>Reset</span></button>
     </div>
 
-    <!-- items grid -->
     <div id="itemsGrid" class="items-grid"></div>
-
-    <!-- pagination buttons -->
     <div id="paginationContainer" class="pagination"></div>
-    <footer>⚡ Items powered by CDN | Page navigation - scroll vertical only</footer>
+    <footer>⚡ Tap any card → full details + copy ID</footer>
+</div>
+
+<!-- Image Overlay -->
+<div id="overlay" class="overlay">
+    <div class="overlay-card">
+        <div class="overlay-img" id="overlayImg">
+            <img id="overlayImage" src="" alt="item">
+        </div>
+        <div class="detail-row">
+            <strong>🆔 Item ID</strong>
+            <span id="overlayItemId">---</span>
+            <button id="copyIdBtn" class="copy-btn">
+                <svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                Copy
+            </button>
+        </div>
+        <div class="detail-row"><strong>📛 Name</strong><span id="overlayName">-</span></div>
+        <div class="detail-row"><strong>🖼️ Icon Name</strong><span id="overlayIcon">-</span></div>
+        <button class="close-overlay" id="closeOverlayBtn">Close</button>
+    </div>
 </div>
 
 <script>
-    // -------- GLOBALS ----------
-    let fullItemData = [];          // original raw items
-    let filteredItems = [];         // after filters + search
+    // ---------- GLOBALS ----------
+    let fullItemData = [];
+    let filteredItems = [];
     let currentPage = 1;
-    const ITEMS_PER_PAGE = 80;      // 4 horizontal * 20 vertical = 80 items per page
-    
-    // unique sets for filters
-    let uniqueTags = new Set();
-    let uniqueRares = new Set();
-    let uniqueTypes = new Set();
+    const ITEMS_PER_PAGE = 80;   // 4x20
+
+    // filter sets (dynamic from file)
+    let tagsSet = new Set();
+    let raresSet = new Set();
+    let typesSet = new Set();
 
     // DOM elements
     const gridContainer = document.getElementById('itemsGrid');
@@ -355,77 +379,78 @@
     const rareFilter = document.getElementById('rareFilter');
     const typeFilter = document.getElementById('typeFilter');
     const resetBtn = document.getElementById('resetFilters');
+    const overlay = document.getElementById('overlay');
+    const overlayImg = document.getElementById('overlayImage');
+    const overlayItemIdSpan = document.getElementById('overlayItemId');
+    const overlayNameSpan = document.getElementById('overlayName');
+    const overlayIconSpan = document.getElementById('overlayIcon');
+    const copyIdBtn = document.getElementById('copyIdBtn');
+    const closeOverlayBtn = document.getElementById('closeOverlayBtn');
 
-    // Helper: load json data from same folder file "Upto-ob53-item-data.json"
-    async function loadItemData() {
+    let currentOverlayItem = null;
+
+    // Helper: fetch JSON from same folder
+    async function loadData() {
         try {
-            // Attempt to fetch the local JSON file (same directory)
             const response = await fetch('./Upto-ob53-item-data.json');
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: could not load json file`);
-            }
-            const data = await response.json();
-            fullItemData = data;
-            // filter out any items that are completely empty? but keep as is, but we will show fallback
-            buildFiltersFromData();
-            applyFiltersAndRender();   // initial render
-        } catch (error) {
-            console.error("Error loading JSON:", error);
-            // fallback: show demo message / we can embed dummy small data for demonstration?
-            gridContainer.innerHTML = `<div class="no-results">⚠️ Failed to load 'Upto-ob53-item-data.json'.<br>Make sure the file is in the same folder as this HTML.</div>`;
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            fullItemData = await response.json();
+            // filter out nulls, ensure array
+            if (!Array.isArray(fullItemData)) fullItemData = [];
+            buildDynamicFilters();
+            applyFiltersAndRender();
+        } catch (err) {
+            console.error(err);
+            gridContainer.innerHTML = `<div class="no-results">❌ Failed to load Upto-ob53-item-data.json<br>Make sure file exists & server is running (GitHub Pages works)</div>`;
             paginationDiv.innerHTML = '';
         }
     }
 
-    // extract distinct tags, rares, types from data
-    function buildFiltersFromData() {
-        uniqueTags.clear();
-        uniqueRares.clear();
-        uniqueTypes.clear();
-        
-        // add default "all" will be handled by empty value
+    // extract all distinct tags, rare, type (fully dynamic: OB versions included)
+    function buildDynamicFilters() {
+        tagsSet.clear();
+        raresSet.clear();
+        typesSet.clear();
         for (let item of fullItemData) {
-            // tag field
-            if (item.tag && typeof item.tag === 'string' && item.tag.trim() !== "") {
-                uniqueTags.add(item.tag);
-            }
-            // Rare field
-            if (item.Rare && typeof item.Rare === 'string' && item.Rare.trim() !== "") {
-                uniqueRares.add(item.Rare);
-            }
-            // type field
-            if (item.type && typeof item.type === 'string' && item.type.trim() !== "") {
-                uniqueTypes.add(item.type);
-            }
+            if (item.tag && typeof item.tag === 'string' && item.tag.trim() !== "") tagsSet.add(item.tag);
+            if (item.Rare && typeof item.Rare === 'string' && item.Rare.trim() !== "") raresSet.add(item.Rare);
+            if (item.type && typeof item.type === 'string' && item.type.trim() !== "") typesSet.add(item.type);
         }
-        
-        // populate dropdowns
-        populateSelect(tagFilter, Array.from(uniqueTags).sort(), "🏷️ All Tags");
-        populateSelect(rareFilter, Array.from(uniqueRares).sort(), "✨ All Rarities");
-        populateSelect(typeFilter, Array.from(uniqueTypes).sort(), "📦 All Types");
+        // Sort tags with natural OB order (OB1, OB2 ... OB99)
+        const sortedTags = Array.from(tagsSet).sort((a,b) => {
+            const aIsOb = a.toUpperCase().startsWith('OB');
+            const bIsOb = b.toUpperCase().startsWith('OB');
+            if (aIsOb && bIsOb) {
+                const numA = parseInt(a.slice(2)) || 0;
+                const numB = parseInt(b.slice(2)) || 0;
+                return numA - numB;
+            }
+            if (aIsOb) return -1;
+            if (bIsOb) return 1;
+            return a.localeCompare(b);
+        });
+        const sortedRares = Array.from(raresSet).sort();
+        const sortedTypes = Array.from(typesSet).sort();
+        populateSelect(tagFilter, sortedTags, "🏷️ Tag");
+        populateSelect(rareFilter, sortedRares, "✨ Rare");
+        populateSelect(typeFilter, sortedTypes, "📦 Type");
     }
-    
-    function populateSelect(selectElement, optionsArray, defaultLabel) {
-        selectElement.innerHTML = `<option value="">${defaultLabel}</option>`;
-        optionsArray.forEach(opt => {
+
+    function populateSelect(selectEl, optionsArr, defaultLabel) {
+        selectEl.innerHTML = `<option value="">${defaultLabel}</option>`;
+        optionsArr.forEach(opt => {
             const option = document.createElement('option');
             option.value = opt;
             option.textContent = opt;
-            selectElement.appendChild(option);
+            selectEl.appendChild(option);
         });
     }
-    
-    // filtering logic (search + filters)
-    function getFilteredItems() {
-        const searchTerm = searchInput.value.trim().toLowerCase();
-        const selectedTag = tagFilter.value;
-        const selectedRare = rareFilter.value;
-        const selectedType = typeFilter.value;
-        
+
+    // filter + search
+    function getFiltered() {
         let results = [...fullItemData];
-        
-        // search: itemID, name, icon (icon property)
-        if (searchTerm !== "") {
+        const searchTerm = searchInput.value.trim().toLowerCase();
+        if (searchTerm) {
             results = results.filter(item => {
                 const idMatch = item.itemID?.toString().includes(searchTerm);
                 const nameMatch = item.name?.toLowerCase().includes(searchTerm);
@@ -433,104 +458,107 @@
                 return idMatch || nameMatch || iconMatch;
             });
         }
-        
-        // tag filter
-        if (selectedTag !== "") {
-            results = results.filter(item => item.tag === selectedTag);
-        }
-        // rare filter
-        if (selectedRare !== "") {
-            results = results.filter(item => item.Rare === selectedRare);
-        }
-        // type filter
-        if (selectedType !== "") {
-            results = results.filter(item => item.type === selectedType);
-        }
-        
+        const selectedTag = tagFilter.value;
+        if (selectedTag) results = results.filter(item => item.tag === selectedTag);
+        const selectedRare = rareFilter.value;
+        if (selectedRare) results = results.filter(item => item.Rare === selectedRare);
+        const selectedType = typeFilter.value;
+        if (selectedType) results = results.filter(item => item.type === selectedType);
         return results;
     }
-    
-    // update filtered list and reset to page 1
+
     function applyFiltersAndRender() {
-        filteredItems = getFilteredItems();
+        filteredItems = getFiltered();
         currentPage = 1;
         renderCurrentPage();
         renderPagination();
     }
-    
-    // render items for currentPage (lazy image fetching: only load images that are visible on this page)
+
+    // Render current page (lazy image loading: only fetch images for current page items)
     function renderCurrentPage() {
         if (!filteredItems.length) {
-            gridContainer.innerHTML = `<div class="no-results">😢 No items match your filters. Try resetting!</div>`;
+            gridContainer.innerHTML = `<div class="no-results">✨ No items match filters. Try reset.</div>`;
             return;
         }
-        
-        const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
-        const endIdx = startIdx + ITEMS_PER_PAGE;
-        const pageItems = filteredItems.slice(startIdx, endIdx);
-        
+        const start = (currentPage-1) * ITEMS_PER_PAGE;
+        const pageItems = filteredItems.slice(start, start + ITEMS_PER_PAGE);
         if (pageItems.length === 0 && currentPage > 1) {
-            // edge: if page is out of range, go to last page
             currentPage = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
             renderCurrentPage();
             return;
         }
-        
-        // build html string with placeholders for images (will load after mount using observer or simple onload? but we can add lazy loading via img src)
-        // We'll use data-item-id attribute and set src after render to avoid massive network on all items at once.
-        // But we want: "which one page he opens only the fetched image for the page" -> perfect: only request images for current page items.
-        // we will render img with src initially empty or placeholder, then after insertion call loadImagesForCurrentPage()
         gridContainer.innerHTML = '';
-        pageItems.forEach(item => {
+        for (let item of pageItems) {
             const card = document.createElement('div');
             card.className = 'item-card';
             const itemId = item.itemID;
             const imageUrl = itemId ? `https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/${itemId}.png` : '';
-            const displayName = item.name && item.name.trim() !== "" ? item.name : `Item #${itemId}`;
-            const tagDisplay = item.tag && item.tag !== "" ? `<span class="badge">${escapeHtml(item.tag)}</span>` : '';
-            const rareDisplay = item.Rare && item.Rare !== "NONE" && item.Rare !== "" ? `<span class="badge rare">${escapeHtml(item.Rare)}</span>` : '';
-            const typeDisplay = item.type && item.type !== "" ? `<span class="badge">${escapeHtml(item.type)}</span>` : '';
+            const displayName = (item.name && item.name.trim()) ? item.name : `Item #${itemId}`;
+            const tagHtml = item.tag ? `<span class="badge">${escapeHtml(item.tag)}</span>` : '';
+            const rareHtml = (item.Rare && item.Rare !== "NONE") ? `<span class="badge rare">${escapeHtml(item.Rare)}</span>` : '';
+            const typeHtml = item.type ? `<span class="badge">${escapeHtml(item.type)}</span>` : '';
             
-            // inner structure
             card.innerHTML = `
-                <div class="card-img">
-                    <img class="item-img" data-src="${imageUrl}" alt="${displayName}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='%23333'%3E%3Crect width='24' height='24' fill='%231a1f2e'/%3E%3Ctext x='4' y='16' fill='%23888' font-size='10'%3E📦%3C/text%3E%3C/svg%3E">
+                <div class="card-img-square">
+                    <img class="item-img" data-src="${imageUrl}" alt="${escapeHtml(displayName)}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 24 24' fill='%23222'%3E%3Crect width='24' height='24' fill='%23131a24'/%3E%3Ctext x='6' y='16' fill='%23666' font-size='10'%3E🎮%3C/text%3E%3C/svg%3E">
                 </div>
                 <div class="item-info">
                     <div class="item-name" title="${escapeHtml(displayName)}">${escapeHtml(displayName)}</div>
-                    <div class="item-details">
-                        ${tagDisplay}
-                        ${rareDisplay}
-                        ${typeDisplay}
-                        <span class="badge" style="background:#141c2a;">ID: ${itemId}</span>
+                    <div class="item-meta">
+                        ${tagHtml} ${rareHtml} ${typeHtml}
+                        <span class="badge">ID: ${itemId}</span>
                     </div>
                 </div>
             `;
+            card.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openOverlay(item);
+            });
             gridContainer.appendChild(card);
-        });
-        
-        // after dom insertion, load images only for visible cards (on this page)
-        loadImagesForCurrentPage();
-    }
-    
-    // lazy load images on current page (no extra requests for other pages)
-    function loadImagesForCurrentPage() {
-        const images = document.querySelectorAll('.item-img');
-        images.forEach(img => {
+        }
+        // lazy load images for current page only (no extra requests)
+        const imgs = document.querySelectorAll('.item-img');
+        imgs.forEach(img => {
             const src = img.getAttribute('data-src');
-            if (src && src !== "" && img.src !== src) {
-                // we check if src is not already set to avoid duplicate requests
-                // but we want to set image only once per page render; we'll directly set src.
-                // also handle broken images (404)
+            if (src && img.src !== src) {
                 img.src = src;
-                img.onerror = function() {
-                    this.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='%23333'%3E%3Crect width='24' height='24' fill='%23252b3b'/%3E%3Ctext x='5' y='16' fill='%23aaa' font-size='9'%3E❌%3C/text%3E%3C/svg%3E";
-                };
+                img.onerror = () => { img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 24 24' fill='%23333'%3E%3Crect width='24' height='24' fill='%231a1f2e'/%3E%3Ctext x='5' y='16' fill='%23888' font-size='10'%3E⚠️%3C/text%3E%3C/svg%3E"; };
             }
         });
     }
-    
-    // render pagination (1,2,3 ...)
+
+    function openOverlay(item) {
+        currentOverlayItem = item;
+        const itemId = item.itemID;
+        const imageUrl = itemId ? `https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/${itemId}.png` : '';
+        overlayImage.src = imageUrl;
+        overlayImage.onerror = () => { overlayImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='%23333'%3E%3Crect width='24' height='24' fill='%23161e2c'/%3E%3Ctext x='6' y='17' fill='%23aaa' font-size='12'%3E?%3C/text%3E%3C/svg%3E"; };
+        overlayItemIdSpan.innerText = itemId ?? 'N/A';
+        overlayNameSpan.innerText = (item.name && item.name.trim()) ? item.name : 'Unnamed';
+        overlayIconSpan.innerText = item.icon && item.icon.trim() !== "" ? item.icon : '—';
+        overlay.classList.add('active');
+    }
+
+    function closeOverlay() {
+        overlay.classList.remove('active');
+        currentOverlayItem = null;
+    }
+
+    // copy item ID using modern clipboard API
+    async function copyItemId() {
+        if (!currentOverlayItem) return;
+        const id = currentOverlayItem.itemID?.toString() || '';
+        if (!id) return;
+        try {
+            await navigator.clipboard.writeText(id);
+            const originalText = copyIdBtn.innerText;
+            copyIdBtn.innerText = '✓ Copied!';
+            setTimeout(() => { copyIdBtn.innerText = originalText; }, 1500);
+        } catch (err) {
+            alert('Manual copy: ' + id);
+        }
+    }
+
     function renderPagination() {
         if (!filteredItems.length) {
             paginationDiv.innerHTML = '';
@@ -541,45 +569,30 @@
             paginationDiv.innerHTML = '';
             return;
         }
-        
-        let paginationHtml = '';
-        // we will show at most 7 page buttons + prev/next? but keep simple 1...total
-        const maxVisible = 7;
-        let startPage = Math.max(1, currentPage - Math.floor(maxVisible/2));
-        let endPage = Math.min(totalPages, startPage + maxVisible - 1);
-        if (endPage - startPage + 1 < maxVisible) {
-            startPage = Math.max(1, endPage - maxVisible + 1);
+        let html = '';
+        let start = Math.max(1, currentPage - 3);
+        let end = Math.min(totalPages, currentPage + 3);
+        if (start > 1) html += `<button class="page-btn" data-page="1">1</button>${start>2 ? '<span style="padding:0 4px;">...</span>' : ''}`;
+        for (let i=start; i<=end; i++) {
+            html += `<button class="page-btn ${i===currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
         }
-        
-        if (startPage > 1) {
-            paginationHtml += `<button class="page-btn" data-page="1">1</button>`;
-            if (startPage > 2) paginationHtml += `<span class="page-btn disabled" style="background:transparent;">...</span>`;
+        if (end < totalPages) {
+            html += `${end < totalPages-1 ? '<span style="padding:0 4px;">...</span>' : ''}<button class="page-btn" data-page="${totalPages}">${totalPages}</button>`;
         }
-        for (let i = startPage; i <= endPage; i++) {
-            paginationHtml += `<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
-        }
-        if (endPage < totalPages) {
-            if (endPage < totalPages - 1) paginationHtml += `<span class="page-btn disabled" style="background:transparent;">...</span>`;
-            paginationHtml += `<button class="page-btn" data-page="${totalPages}">${totalPages}</button>`;
-        }
-        
-        paginationDiv.innerHTML = paginationHtml;
-        // attach event listeners
+        paginationDiv.innerHTML = html;
         document.querySelectorAll('.page-btn[data-page]').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const newPage = parseInt(btn.getAttribute('data-page'), 10);
-                if (!isNaN(newPage) && newPage !== currentPage) {
-                    currentPage = newPage;
+                const page = parseInt(btn.getAttribute('data-page'), 10);
+                if (!isNaN(page) && page !== currentPage) {
+                    currentPage = page;
                     renderCurrentPage();
                     renderPagination();
-                    // scroll to top smoothly
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             });
         });
     }
-    
-    // simple escape html
+
     function escapeHtml(str) {
         if (!str) return '';
         return str.replace(/[&<>]/g, function(m) {
@@ -587,25 +600,15 @@
             if (m === '<') return '&lt;';
             if (m === '>') return '&gt;';
             return m;
-        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-            return c;
         });
     }
-    
-    // event listeners for filters
-    function bindEvents() {
-        searchInput.addEventListener('input', () => {
-            applyFiltersAndRender();
-        });
-        tagFilter.addEventListener('change', () => {
-            applyFiltersAndRender();
-        });
-        rareFilter.addEventListener('change', () => {
-            applyFiltersAndRender();
-        });
-        typeFilter.addEventListener('change', () => {
-            applyFiltersAndRender();
-        });
+
+    // Event listeners
+    function bindUI() {
+        searchInput.addEventListener('input', () => applyFiltersAndRender());
+        tagFilter.addEventListener('change', () => applyFiltersAndRender());
+        rareFilter.addEventListener('change', () => applyFiltersAndRender());
+        typeFilter.addEventListener('change', () => applyFiltersAndRender());
         resetBtn.addEventListener('click', () => {
             searchInput.value = '';
             tagFilter.value = '';
@@ -613,25 +616,16 @@
             typeFilter.value = '';
             applyFiltersAndRender();
         });
+        closeOverlayBtn.addEventListener('click', closeOverlay);
+        overlay.addEventListener('click', (e) => { if(e.target === overlay) closeOverlay(); });
+        copyIdBtn.addEventListener('click', copyItemId);
     }
-    
-    // additional: ensure body no horizontal scroll and page behavior
-    function enforceNoHorizontal() {
-        document.body.style.overflowX = 'hidden';
-        window.addEventListener('resize', () => {
-            if (document.body.scrollWidth > window.innerWidth) {
-                document.body.style.overflowX = 'hidden';
-            }
-        });
+
+    // performance: throttle not needed but we use simple rendering
+    function init() {
+        bindUI();
+        loadData();
     }
-    
-    // initialization
-    async function init() {
-        enforceNoHorizontal();
-        bindEvents();
-        await loadItemData();
-    }
-    
     init();
 </script>
 </body>
