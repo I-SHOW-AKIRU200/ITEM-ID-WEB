@@ -1,3 +1,14 @@
+check out the code, from the code please don't remove or change anything from the code. just what I tell you only do that.
+
+Now in the website add a setting icon in top right corner when user clicks on the button open a bottom slied overall screen in the screen has 2 button 1st Dark/Light Mode togal button and 2nd is Devloper Mode button when user on the Devloper mode button then when he click on any item's images automatically copy the item's id. And below of that show Some details 
+
+Owner
+Telegram: tg://openmessage?user_id=7051421564
+
+Instagram: https://www.instagram.com/khushi__09_f_f
+
+Don't use text use the telegram or instagram SVG logo for better ui.
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -495,6 +506,126 @@ main { max-width: 1400px; margin: 0 auto; padding: 16px 20px 24px; }
   .ev-detail-row { grid-template-columns: 80px 1fr; }
   .tab-btn { padding: 10px 12px; font-size: 9px; letter-spacing: 0.12em; }
 }
+
+/* ── HEADER TITLE ROW ── */
+.header-title-row {
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.settings-icon-btn {
+  position: absolute; right: 0;
+  background: transparent; border: 1px solid var(--border2);
+  color: var(--text-dim); width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s; border-radius: 0;
+}
+.settings-icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── SETTINGS BACKDROP ── */
+.settings-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px); z-index: 600;
+  opacity: 0; pointer-events: none; transition: opacity 0.28s;
+}
+.settings-backdrop.open { opacity: 1; pointer-events: all; }
+
+/* ── SETTINGS BOTTOM SHEET ── */
+.settings-sheet {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 700;
+  background: var(--surface); border-top: 1px solid var(--border2);
+  padding: 12px 24px 40px;
+  transform: translateY(100%); transition: transform 0.32s cubic-bezier(0.22,1,0.36,1);
+  max-height: 85vh; overflow-y: auto;
+}
+.settings-sheet.open { transform: translateY(0); }
+
+.settings-handle {
+  width: 40px; height: 3px; background: var(--border2);
+  border-radius: 2px; margin: 0 auto 18px; 
+}
+.settings-title {
+  font-family: 'Orbitron', monospace; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.25em; color: var(--accent); margin-bottom: 20px;
+  text-align: center;
+}
+
+/* ── SETTINGS ITEM ROW ── */
+.settings-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+}
+.settings-item-label {
+  font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 600;
+  color: var(--text); letter-spacing: 0.05em;
+}
+.settings-item-sub {
+  font-family: 'Share Tech Mono', monospace; font-size: 10px;
+  color: var(--text-muted); letter-spacing: 0.04em; margin-top: 3px;
+}
+
+/* ── TOGGLE BUTTON ── */
+.toggle-btn {
+  width: 46px; height: 26px; border-radius: 13px;
+  background: var(--surface3); border: 1px solid var(--border2);
+  position: relative; cursor: pointer; transition: background 0.25s, border-color 0.25s;
+  flex-shrink: 0;
+}
+.toggle-btn.on { background: var(--accent); border-color: var(--accent); }
+.toggle-knob {
+  position: absolute; top: 3px; left: 3px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--text-muted); transition: transform 0.25s, background 0.25s;
+}
+.toggle-btn.on .toggle-knob { transform: translateX(20px); background: #000; }
+
+/* ── SETTINGS DIVIDER ── */
+.settings-divider { height: 1px; background: var(--border); margin: 18px 0 14px; }
+
+/* ── OWNER SECTION ── */
+.settings-owner-label {
+  font-family: 'Orbitron', monospace; font-size: 9px; letter-spacing: 0.2em;
+  color: var(--text-muted); margin-bottom: 14px;
+}
+.settings-owner-links { display: flex; gap: 14px; align-items: center; }
+.settings-owner-link {
+  display: flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border: 1px solid var(--border2);
+  color: var(--text-dim); background: var(--surface2);
+  text-decoration: none; transition: all 0.2s;
+}
+.settings-owner-link:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── DEV MODE TOAST ── */
+.dev-toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--accent); color: #000;
+  font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 0.08em;
+  padding: 9px 18px; z-index: 800;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  white-space: nowrap;
+}
+.dev-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── DEV MODE card indicator ── */
+body.dev-mode .item-card { cursor: crosshair; }
+body.dev-mode .item-card .card-overlay-hint span::before { content: 'COPY ID · '; }
+
+/* ── LIGHT THEME ── */
+body.light-theme {
+  --bg: #f5f5f5;
+  --surface: #ffffff;
+  --surface2: #efefef;
+  --surface3: #e5e5e5;
+  --border: #d8d8d8;
+  --border2: #c8c8c8;
+  --text: #111111;
+  --text-dim: #555555;
+  --text-muted: #999999;
+}
+body.light-theme header { background: rgba(245,245,245,0.96); }
+body.light-theme .loading-screen { background: #f5f5f5; }
+body.light-theme .filter-panels-wrap { background: #f0f0f0; }
 </style>
 </head>
 <body>
@@ -509,7 +640,15 @@ main { max-width: 1400px; margin: 0 auto; padding: 16px 20px 24px; }
 <!-- HEADER -->
 <header id="siteHeader" style="display:none">
   <div class="header-inner">
-    <div class="site-title">KHUSHI ITEMS INFO</div>
+    <div class="header-title-row">
+      <div class="site-title">KHUSHI ITEMS INFO</div>
+      <button class="settings-icon-btn" onclick="openSettings()" aria-label="Settings">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </div>
     <div class="tab-bar">
       <button class="tab-btn active" id="tabItems" onclick="switchTab('items')">ITEMS</button>
       <button class="tab-btn" id="tabEvents" onclick="switchTab('events')">EVENTS</button>
@@ -641,6 +780,52 @@ main { max-width: 1400px; margin: 0 auto; padding: 16px 20px 24px; }
     <div class="ev-overlay-body" id="evOverlayBody"></div>
   </div>
 </div>
+
+<!-- SETTINGS BOTTOM SHEET -->
+<div class="settings-backdrop" id="settingsBackdrop" onclick="closeSettings()"></div>
+<div class="settings-sheet" id="settingsSheet">
+  <div class="settings-handle"></div>
+  <div class="settings-title">SETTINGS</div>
+
+  <div class="settings-item">
+    <div class="settings-item-info">
+      <div class="settings-item-label">Dark / Light Mode</div>
+      <div class="settings-item-sub">Toggle theme</div>
+    </div>
+    <button class="toggle-btn" id="themeToggle" onclick="toggleTheme()">
+      <span class="toggle-knob"></span>
+    </button>
+  </div>
+
+  <div class="settings-item">
+    <div class="settings-item-info">
+      <div class="settings-item-label">Developer Mode</div>
+      <div class="settings-item-sub">Click item image to copy ID</div>
+    </div>
+    <button class="toggle-btn" id="devToggle" onclick="toggleDevMode()">
+      <span class="toggle-knob"></span>
+    </button>
+  </div>
+
+  <div class="settings-divider"></div>
+
+  <div class="settings-owner-label">OWNER</div>
+  <div class="settings-owner-links">
+    <a class="settings-owner-link" href="tg://openmessage?user_id=7051421564" target="_blank" aria-label="Telegram">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/>
+      </svg>
+    </a>
+    <a class="settings-owner-link" href="https://www.instagram.com/khushi__09_f_f" target="_blank" rel="noopener" aria-label="Instagram">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+      </svg>
+    </a>
+  </div>
+</div>
+
+<!-- DEV MODE TOAST -->
+<div class="dev-toast" id="devToast"></div>
 
 <script>
 // ═══════════════════════════════════════════════════
@@ -865,7 +1050,17 @@ function renderGrid(items) {
   items.forEach(item => {
     const card = document.createElement('div');
     card.className = 'item-card';
-    card.onclick = () => openOverlay(item);
+    card.onclick = () => {
+      if (isDevMode) {
+        navigator.clipboard.writeText(String(item.itemID)).then(() => {
+          showDevToast('COPIED: ' + item.itemID);
+        }).catch(() => {
+          showDevToast('COPY FAILED');
+        });
+      } else {
+        openOverlay(item);
+      }
+    };
     const rare = (item.Rare || 'NONE').replace(/[^A-Z_]/g, '');
     card.innerHTML = `
       <div class="item-img-placeholder" id="ph-${item.itemID}"><div class="placeholder-icon"></div></div>
@@ -1188,6 +1383,45 @@ function escHtml(str) {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeOverlay(); closeEvOverlay(); }
 });
+
+// ═══════════════════════════════════════════════════
+//  SETTINGS
+// ═══════════════════════════════════════════════════
+let isLightTheme = false;
+let isDevMode = false;
+
+function openSettings() {
+  document.getElementById('settingsSheet').classList.add('open');
+  document.getElementById('settingsBackdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSettings() {
+  document.getElementById('settingsSheet').classList.remove('open');
+  document.getElementById('settingsBackdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function toggleTheme() {
+  isLightTheme = !isLightTheme;
+  document.body.classList.toggle('light-theme', isLightTheme);
+  document.getElementById('themeToggle').classList.toggle('on', isLightTheme);
+}
+
+function toggleDevMode() {
+  isDevMode = !isDevMode;
+  document.body.classList.toggle('dev-mode', isDevMode);
+  document.getElementById('devToggle').classList.toggle('on', isDevMode);
+  showDevToast(isDevMode ? 'DEVELOPER MODE ON' : 'DEVELOPER MODE OFF');
+}
+
+function showDevToast(msg) {
+  const t = document.getElementById('devToast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2000);
+}
 
 // ═══════════════════════════════════════════════════
 //  START
