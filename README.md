@@ -29,7 +29,7 @@ If you want to run this project locally:
 3. Open index.html in your browser.
 
 # 📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the <LICENSE> file for details.
 
 # 🤝 Contributing
 Contributions, issues, and feature requests are welcome! Feel free to check the issues page.
