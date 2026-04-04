@@ -21,7 +21,7 @@ If you want to run this project locally:
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/I-SHOW-AKIRU200/ITEM-ID-WEB.git](https://github.com/I-SHOW-AKIRU200/ITEM-ID-WEB.git)
+   git clone https://github.com/I-SHOW-AKIRU200/ITEM-ID-WEB.git
 
 2. Navigate to the folder:
    ```bash
