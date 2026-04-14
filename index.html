@@ -657,8 +657,8 @@ body.light-theme .filter-panels-wrap { background: #f0f0f0; }
       </button>
     </div>
     <div class="tab-bar">
-      <button class="tab-btn active" id="tabItems" onclick="switchTab('items')">ITEMS</button>
-      <button class="tab-btn" id="tabEvents" onclick="switchTab('events')">EVENTS</button>
+      <button class="tab-btn active" id="tabEvents" onclick="switchTab('events')">EVENTS</button>
+      <button class="tab-btn" id="tabItems" onclick="switchTab('items')">ITEMS</button>
     </div>
   </div>
 </header>
@@ -666,7 +666,7 @@ body.light-theme .filter-panels-wrap { background: #f0f0f0; }
 <!-- ══ ITEMS TAB CONTENT ══ -->
 
 <!-- Items controls (search + filter buttons) -->
-<div class="items-controls visible" id="itemsControls">
+<div class="items-controls" id="itemsControls">
   <div class="controls-row">
     <div class="search-wrap">
       <input class="search-input" type="text" id="searchInput"
@@ -722,7 +722,7 @@ body.light-theme .filter-panels-wrap { background: #f0f0f0; }
 </div>
 
 <!-- Items stats + grid + pagination -->
-<div id="itemsSection" class="visible">
+<div id="itemsSection" class="">
   <div class="stats-bar" id="statsBar">
     <span class="stats-text">Showing <span class="stats-count" id="statsCount">0</span> items</span>
     <span class="stats-text" id="statsPage"></span>
@@ -860,7 +860,7 @@ let filteredItems = [];
 let currentPage = 1;
 let totalPages = 1;
 let activePanels = { type: false, rare: false, tag: false };
-let currentTab = 'items';
+let currentTab = 'events';
 
 let eventsData = null;      // raw fetched data
 let eventsRegion = 'IND';
@@ -883,7 +883,7 @@ function switchTab(tab) {
 
   // Update URL
   const p = new URLSearchParams(window.location.search);
-  if (tab === 'events') p.set('tab', 'events'); else p.delete('tab');
+  if (tab === 'items') p.set('tab', 'items'); else p.delete('tab');
   history.replaceState(null, '', p.toString() ? location.pathname + '?' + p.toString() : location.pathname);
 }
 
@@ -903,7 +903,7 @@ function pushURL() {
   if (rareF) params.set('rare', rareF);
   if (tagF) params.set('tag', tagF);
   if (currentPage > 1) params.set('page', currentPage);
-  if (currentTab === 'events') params.set('tab', 'events');
+  if (currentTab === 'items') params.set('tab', 'items');
   const qs = params.toString();
   history.replaceState(null, '', qs ? (location.pathname + '?' + qs) : location.pathname);
 }
@@ -957,10 +957,9 @@ async function init() {
     await delay(300);
     showApp();
 
-    // Handle ?tab=events
-    if (getParams().get('tab') === 'events') {
-      switchTab('events');
-    } else {
+    // Handle ?tab=items (items is now the secondary tab)
+    if (getParams().get('tab') === 'items') {
+      switchTab('items');
       renderPage();
       // Handle ?item=ID
       const itemId = getParams().get('item');
@@ -972,6 +971,10 @@ async function init() {
           openOverlay(found);
         }
       }
+    } else {
+      // Default: show events
+      document.getElementById('eventsSection').classList.add('visible');
+      loadEvents();
     }
   } catch(e) {
     document.getElementById('loadingText').textContent = 'ERROR: ' + e.message + ' — Place Upto-ob53-item-data.json in the same folder.';
